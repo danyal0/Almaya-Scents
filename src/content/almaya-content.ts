@@ -122,6 +122,9 @@ export type BrandContent = {
   contactPage: {
     title: string;
     intro: string;
+    bio: string;
+    delivery: string;
+    whatsappLabel: string;
   };
   products: Product[];
   social: {
@@ -206,10 +209,10 @@ const products: Product[] = [
 
 export const almayaContent: BrandContent = {
   name: "Almaya Scents",
-  tagline: "Fragrance, remembered.",
+  tagline: "Crafting timeless scents for every essence.",
   description:
-    "Almaya Scents is a fragrance house devoted to refined, memorable perfumery — compositions made with intention, presented without excess.",
-  announcement: "Crystal For Her · Essential For Him — free delivery nationwide.",
+    "Crafting timeless scents for every essence. Discover the art of Almaya Scents.",
+  announcement: "Delivering all over Pakistan · WhatsApp to order +92 307 0320103",
 
   hero: {
     image: {
@@ -359,7 +362,7 @@ export const almayaContent: BrandContent = {
       },
       {
         heading: "The invitation",
-        body: "Order through Instagram or WhatsApp for free nationwide delivery in Pakistan. Follow Almaya Scents for new releases, and reach out directly for inquiries.",
+        body: "Crafting timeless scents for every essence — discover the art of Almaya Scents. WhatsApp +923070320103 to order, with delivery all over Pakistan. Follow @almayascents for new releases.",
       },
     ],
     image: {
@@ -381,7 +384,10 @@ export const almayaContent: BrandContent = {
   contactPage: {
     title: "Contact",
     intro:
-      "For orders and inquiries, message Almaya Scents on Instagram or WhatsApp. Free delivery is available nationwide across Pakistan.",
+      "Crafting timeless scents for every essence. Discover the art of Almaya Scents.",
+    bio: "Crafting timeless scents for every essence. Discover the art of Almaya Scents.",
+    delivery: "Delivering all over Pakistan",
+    whatsappLabel: "WhatsApp to Order +923070320103",
   },
 
   products,

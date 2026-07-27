@@ -14,8 +14,8 @@ export const metadata: Metadata = buildMetadata({
 });
 
 /**
- * Instagram is the only verified public channel for Almaya Scents.
- * An email action appears only when NEXT_PUBLIC_CONTACT_EMAIL is set.
+ * Contact channels for Almaya Scents — Instagram and WhatsApp ordering,
+ * with nationwide delivery across Pakistan.
  */
 export default function ContactPage() {
   const { contactPage } = almayaContent;
@@ -29,34 +29,16 @@ export default function ContactPage() {
           <h1 className="mt-5 font-serif text-display-l font-light text-ink">
             {contactPage.title}
           </h1>
-          <p className="mt-8 max-w-xl text-body text-charcoal/80">
-            {contactPage.intro}
+          <p className="mt-8 max-w-xl text-pretty text-body text-charcoal/80">
+            {contactPage.bio}
+          </p>
+          <p className="mt-4 font-sans text-meta uppercase tracking-[0.18em] text-muted">
+            {contactPage.delivery}
           </p>
         </div>
 
         <div className="mt-16 grid max-w-4xl grid-cols-1 gap-10 md:mt-24 md:grid-cols-2">
           <Reveal>
-            <section
-              aria-label="Instagram"
-              className="flex h-full flex-col items-start gap-6 border-t border-line pt-8"
-            >
-              <InstagramIcon size={24} className="text-ink" />
-              <div className="flex flex-col gap-2">
-                <h2 className="font-serif text-heading font-light text-ink">
-                  Instagram
-                </h2>
-                <p className="text-pretty text-body-sm text-muted">
-                  Message {siteConfig.instagramHandle} directly for inquiries,
-                  orders and everything in between.
-                </p>
-              </div>
-              <Button href={siteConfig.instagramUrl} external className="mt-auto">
-                Contact on Instagram
-              </Button>
-            </section>
-          </Reveal>
-
-          <Reveal delay={0.08}>
             <section
               aria-label="WhatsApp"
               className="flex h-full flex-col items-start gap-6 border-t border-line pt-8"
@@ -76,16 +58,42 @@ export default function ContactPage() {
               </svg>
               <div className="flex flex-col gap-2">
                 <h2 className="font-serif text-heading font-light text-ink">
-                  WhatsApp
+                  WhatsApp to Order
                 </h2>
                 <p className="text-pretty text-body-sm text-muted">
-                  Prefer a quick message? Reach the house at{" "}
+                  {contactPage.delivery}. Message{" "}
                   <span className="text-ink">{siteConfig.whatsappDisplay}</span>{" "}
-                  for orders and free nationwide delivery.
+                  to place your order.
                 </p>
               </div>
-              <Button href={siteConfig.whatsappUrl} external variant="outline" className="mt-auto">
-                Message on WhatsApp
+              <Button href={siteConfig.whatsappUrl} external className="mt-auto">
+                {contactPage.whatsappLabel}
+              </Button>
+            </section>
+          </Reveal>
+
+          <Reveal delay={0.08}>
+            <section
+              aria-label="Instagram"
+              className="flex h-full flex-col items-start gap-6 border-t border-line pt-8"
+            >
+              <InstagramIcon size={24} className="text-ink" />
+              <div className="flex flex-col gap-2">
+                <h2 className="font-serif text-heading font-light text-ink">
+                  Instagram
+                </h2>
+                <p className="text-pretty text-body-sm text-muted">
+                  Follow {siteConfig.instagramHandle} and message directly for
+                  inquiries, new releases, and everything in between.
+                </p>
+              </div>
+              <Button
+                href={siteConfig.instagramUrl}
+                external
+                variant="outline"
+                className="mt-auto"
+              >
+                Contact on Instagram
               </Button>
             </section>
           </Reveal>

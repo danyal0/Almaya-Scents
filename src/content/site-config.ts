@@ -8,7 +8,7 @@ export const siteConfig = {
   name: "Almaya Scents",
   title: "Almaya Scents | The Art of Fragrance",
   description:
-    "Almaya Scents — a fragrance house devoted to refined, memorable perfumery. Explore the collection and the world of Almaya.",
+    "Crafting timeless scents for every essence. Discover the art of Almaya Scents. Delivering all over Pakistan.",
 
   /**
    * Canonical site URL, e.g. "https://username.github.io/repository-name".
@@ -25,7 +25,7 @@ export const siteConfig = {
 
   /** Public WhatsApp order line published by Almaya Scents. */
   whatsappUrl: "https://wa.me/923070320103",
-  whatsappDisplay: "0307-0320103",
+  whatsappDisplay: "+923070320103",
 
   /**
    * Optional public contact email. Email actions are hidden when empty —

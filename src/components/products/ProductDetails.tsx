@@ -60,7 +60,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               Order on Instagram
             </Button>
             <Button href={siteConfig.whatsappUrl} external variant="outline">
-              WhatsApp {siteConfig.whatsappDisplay}
+              WhatsApp to Order {siteConfig.whatsappDisplay}
             </Button>
           </>
         )}
