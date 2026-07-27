@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600" role="img" aria-label="Image unavailable">
+  <rect width="1600" height="1600" fill="#F5F2EC"/>
+  <g fill="none" stroke="#111111" stroke-width="4">
+    <rect x="660" y="640" width="280" height="420" rx="8" stroke-opacity="0.3"/>
+    <rect x="762" y="580" width="76" height="60" stroke-opacity="0.3"/>
+  </g>
+  <line x1="620" y1="1180" x2="980" y2="1180" stroke="#111111" stroke-opacity="0.2" stroke-width="3"/>
+</svg>

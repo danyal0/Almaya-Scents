@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2200" viewBox="0 0 1600 2200" role="img" aria-label="Placeholder artwork: flacon standing in shadow">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E8E2D6"/>
+      <stop offset="1" stop-color="#CFC8BB"/>
+    </linearGradient>
+    <linearGradient id="shade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#111111" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#111111" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.05"/></feComponentTransfer>
+      <feComposite operator="over" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="2200" fill="url(#bg)"/>
+  <rect width="620" height="2200" fill="url(#shade)"/>
+  <line x1="0" y1="1660" x2="1600" y2="1660" stroke="#111111" stroke-opacity="0.18" stroke-width="3"/>
+  <ellipse cx="880" cy="1662" rx="300" ry="24" fill="#111111" opacity="0.1"/>
+  <polygon points="880,1660 1420,1660 1560,2000 1020,2000" fill="#111111" opacity="0.05"/>
+  <g fill="none" stroke="#111111" stroke-opacity="0.65" stroke-width="4.5">
+    <path d="M700 1656 L700 1050 Q700 980 780 966 L830 958 L830 880 L930 880 L930 958 L980 966 Q1060 980 1060 1050 L1060 1656 Z"/>
+    <rect x="832" y="790" width="96" height="90"/>
+    <line x1="740" y1="1100" x2="740" y2="1540" stroke-opacity="0.22"/>
+  </g>
+  <rect width="1600" height="2200" fill="#F5F2EC" opacity="0" filter="url(#grain)"/>
+</svg>

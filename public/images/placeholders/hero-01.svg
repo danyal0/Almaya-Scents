@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1600" viewBox="0 0 2400 1600" role="img" aria-label="Placeholder artwork: a minimal fragrance flacon in soft light">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FCFAF6"/>
+      <stop offset="0.62" stop-color="#F5F2EC"/>
+      <stop offset="1" stop-color="#EDE8DF"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.66" cy="0.52" r="0.55">
+      <stop offset="0" stop-color="#FCFAF6" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#FCFAF6" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.05"/></feComponentTransfer>
+      <feComposite operator="over" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <rect width="2400" height="1600" fill="url(#sky)"/>
+  <rect width="2400" height="1600" fill="url(#glow)"/>
+  <line x1="0" y1="1150" x2="2400" y2="1150" stroke="#111111" stroke-opacity="0.16" stroke-width="3"/>
+  <ellipse cx="1580" cy="1152" rx="300" ry="26" fill="#111111" opacity="0.07"/>
+  <g fill="none" stroke="#111111" stroke-opacity="0.6" stroke-width="4">
+    <path d="M1420 1148 L1420 620 Q1420 560 1480 548 L1520 540 L1520 470 L1640 470 L1640 540 L1680 548 Q1740 560 1740 620 L1740 1148 Z"/>
+    <rect x="1533" y="380" width="94" height="90"/>
+    <line x1="1533" y1="425" x2="1627" y2="425" stroke-opacity="0.3"/>
+    <line x1="1452" y1="700" x2="1452" y2="1050" stroke-opacity="0.22"/>
+  </g>
+  <rect width="2400" height="1600" fill="#F5F2EC" opacity="0" filter="url(#grain)"/>
+</svg>
