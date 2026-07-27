@@ -1,11 +1,15 @@
 import Link from "next/link";
 
+import { getAssetPath } from "@/lib/assets";
 import { cn } from "@/lib/utils";
+
+const LOGO_SRC = "/images/logo/almaya-logo.jpg";
+const LOGO_DIMENSION = 1080;
 
 type WordmarkProps = {
   /**
-   * primary — two-line editorial lockup for the header.
-   * compact — single-line lockup for tight contexts.
+   * primary — header / footer logo mark.
+   * compact — slightly smaller lockup for tight contexts (e.g. mobile menu).
    * text — plain accessible text fallback.
    */
   variant?: "primary" | "compact" | "text";
@@ -14,28 +18,32 @@ type WordmarkProps = {
   className?: string;
 };
 
-function WordmarkContent({ variant }: { variant: "primary" | "compact" | "text" }) {
+function WordmarkContent({
+  variant,
+  decorative,
+}: {
+  variant: "primary" | "compact" | "text";
+  decorative: boolean;
+}) {
   if (variant === "text") {
     return <span>Almaya Scents</span>;
   }
 
-  if (variant === "compact") {
-    return (
-      <span className="font-serif text-[1.05rem] font-medium uppercase leading-none tracking-[0.32em]">
-        Almaya&nbsp;Scents
-      </span>
-    );
-  }
+  const sizeClass =
+    variant === "compact"
+      ? "h-11 w-11 sm:h-12 sm:w-12"
+      : "h-12 w-12 sm:h-14 sm:w-14";
 
   return (
-    <span className="flex flex-col items-center gap-[0.28rem]">
-      <span className="font-serif text-[1.35rem] font-medium uppercase leading-none tracking-[0.42em] [text-indent:0.42em] sm:text-[1.5rem]">
-        Almaya
-      </span>
-      <span className="font-sans text-[0.5rem] font-normal uppercase leading-none tracking-[0.62em] [text-indent:0.62em] text-current/70 sm:text-[0.55rem]">
-        Scents
-      </span>
-    </span>
+    // eslint-disable-next-line @next/next/no-img-element -- static export uses local logo asset
+    <img
+      src={getAssetPath(LOGO_SRC)}
+      alt={decorative ? "" : "Almaya Scents"}
+      width={LOGO_DIMENSION}
+      height={LOGO_DIMENSION}
+      decoding="async"
+      className={cn(sizeClass, "object-contain")}
+    />
   );
 }
 
@@ -49,14 +57,14 @@ export function Wordmark({
   if (!asLink) {
     return (
       <span className={classes}>
-        <WordmarkContent variant={variant} />
+        <WordmarkContent variant={variant} decorative={false} />
       </span>
     );
   }
 
   return (
     <Link href="/" aria-label="Almaya Scents — home" className={classes}>
-      <WordmarkContent variant={variant} />
+      <WordmarkContent variant={variant} decorative />
     </Link>
   );
 }

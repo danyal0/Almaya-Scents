@@ -62,9 +62,13 @@ names are known.
 
 ### Logo — `/public/images/logo/`
 
-`wordmark.svg` and `wordmark-compact.svg` are original typographic
-wordmarks created for this site. If Almaya Scents provides an authorized
-logo file, place it here and update `src/components/layout/Wordmark.tsx`.
+| Filename           | Size (px)   | Ratio | Notes                                      |
+| ------------------ | ----------- | ----- | ------------------------------------------ |
+| `almaya-logo.jpg`  | 1080 × 1080 | 1:1   | Authorized brand mark used in the Wordmark |
+
+The header, footer, and mobile menu render this file via
+`src/components/layout/Wordmark.tsx`. Replace the file in place (same
+filename and square crop) to update the logo site-wide.
 
 ## Format and size guidance
 

@@ -12,7 +12,7 @@ export function Footer() {
     <footer className="on-dark bg-ink text-ivory">
       <div className="container-editorial flex flex-col gap-14 py-16 md:py-20">
         <div className="flex flex-col items-start justify-between gap-12 md:flex-row md:items-center">
-          <Wordmark className="text-ivory" />
+          <Wordmark />
 
           <nav aria-label="Footer">
             <ul className="flex flex-wrap gap-x-8 gap-y-3">
