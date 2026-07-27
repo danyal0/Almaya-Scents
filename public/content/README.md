@@ -1,13 +1,10 @@
 # Almaya Scents — Content Asset Guide
 
-This site currently uses **original placeholder artwork** in
-`/public/images/placeholders/` because the Almaya Scents Instagram profile
-([@almayascents](https://www.instagram.com/almayascents)) requires
-authentication and could not be inspected automatically. **No Instagram CDN
-images are hotlinked**, and no product facts were invented.
+Product photography for **Crystal For Her** and **Essential For Him** lives
+under `/public/images/products/` (and related hero / editorial / brand
+crops). Images are stored locally — Instagram CDN URLs are never hotlinked.
 
-When you have **authorized** Almaya photography (downloaded with permission
-from the brand), follow this guide to replace the placeholders.
+To add or replace products, follow the steps below.
 
 ## How replacement works
 
@@ -35,9 +32,7 @@ Two images per product (portrait + detail). Suggested names:
 | `<slug>-portrait.jpg`     | 1600 × 2200 | 8:11  | Primary bottle photograph |
 | `<slug>-detail.jpg`       | 1600 × 1600 | 1:1   | Detail / texture crop     |
 
-Current placeholder slugs: `almaya-no-i`, `almaya-no-ii`, `almaya-no-iii`,
-`almaya-no-iv`. Rename slugs in `almaya-content.ts` when the real product
-names are known.
+Current product slugs: `crystal-for-her`, `essential-for-him`.
 
 ### Editorial — `/public/images/editorial/`
 

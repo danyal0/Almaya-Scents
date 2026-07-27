@@ -8,13 +8,12 @@ editorial serif for display type, generous whitespace, hairline borders,
 and quiet motion. All brand content lives in a single typed content
 manifest so it can be updated without touching components.
 
-> **Content status:** the Almaya Scents Instagram profile
-> ([@almayascents](https://www.instagram.com/almayascents)) requires
-> authentication and could not be inspected automatically. The site
-> therefore ships with clearly labeled **placeholder products and original
-> placeholder artwork** — no product names, scent notes, prices or claims
-> were invented. See [docs/CONTENT_MANAGEMENT.md](docs/CONTENT_MANAGEMENT.md)
-> for the replacement workflow.
+> **Content status:** the collection currently features **Crystal For Her**
+> and **Essential For Him**, with photography and scent notes drawn from
+> the official Almaya Scents Instagram
+> ([@almayascents](https://www.instagram.com/almayascents)). See
+> [docs/CONTENT_MANAGEMENT.md](docs/CONTENT_MANAGEMENT.md) for how to add
+> or replace products.
 
 ## Technology stack
 

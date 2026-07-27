@@ -6,7 +6,7 @@ export const BASE = "/almaya-e2e";
 export const ALL_PAGES = [
   { path: "/", name: "Home", h1: /fragrance, remembered/i },
   { path: "/products/", name: "Collection", h1: /the collection/i },
-  { path: "/products/almaya-no-i/", name: "Product", h1: /almaya no\. i/i },
+  { path: "/products/crystal-for-her/", name: "Product", h1: /crystal for her/i },
   { path: "/about/", name: "About", h1: /an expression beyond scent/i },
   { path: "/journal/", name: "Journal", h1: /journal/i },
   { path: "/contact/", name: "Contact", h1: /contact/i },

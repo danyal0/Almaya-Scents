@@ -7,40 +7,14 @@
  * caption and description on the website. Edit content here — nothing
  * is hardcoded inside components.
  *
- * IMPORTANT — PLACEHOLDER STATUS
- * ---------------------------------------------------------------------
- * The Almaya Scents Instagram profile (https://www.instagram.com/almayascents)
- * could not be inspected automatically (it requires authentication), and
- * no other verified public source for the brand's products was found.
- *
- * Therefore:
- *
- *   - Every entry marked with `placeholder: true` is a STRUCTURAL
- *     PLACEHOLDER, not a real Almaya Scents product. Products are
- *     numbered ("No. I", "No. II", …) instead of carrying invented
- *     evocative names.
- *   - No scent notes, prices, sizes, concentrations, ingredients or
- *     availability claims are included anywhere, because none could be
- *     verified. Components omit those sections automatically when the
- *     fields are absent.
- *   - All imagery points to original placeholder artwork in
- *     /public/images/placeholders/. Replace with authorized Almaya
- *     photography — see /public/content/README.md for exact filenames,
- *     dimensions and formats.
- *
- * HOW TO REPLACE A PLACEHOLDER PRODUCT
- * ---------------------------------------------------------------------
- *   1. Drop authorized images into /public/images/products/ using the
- *      filenames documented in /public/content/README.md.
- *   2. Update the product entry below: name, slug, description, story,
- *      and (only if published by Almaya) category and notes.
- *   3. Set `placeholder: false` once the entry reflects verified content.
+ * Product photography and copy are drawn from the official Almaya Scents
+ * Instagram (@almayascents). Imagery lives under /public/images/.
  *
  * =====================================================================
  */
 
 export type ContentImage = {
-  /** Path under /public, e.g. "/images/products/no-i-portrait.svg". */
+  /** Path under /public, e.g. "/images/products/crystal-for-her-portrait.jpg". */
   src: string;
   alt: string;
   width: number;
@@ -152,108 +126,68 @@ export type BrandContent = {
 };
 
 /* ===================================================================== */
-/* Placeholder products — replace with verified Almaya Scents products.  */
+/* Products                                                              */
 /* ===================================================================== */
 
 const products: Product[] = [
   {
-    // PLACEHOLDER — replace with a real Almaya Scents product.
-    slug: "almaya-no-i",
-    name: "Almaya No. I",
+    slug: "crystal-for-her",
+    name: "Crystal For Her",
+    category: "For Her",
     description:
-      "The first composition of the collection. A study in restraint — made to be worn close, and remembered longer.",
+      "A favorite for a reason — fresh energy balanced with sophisticated floral depth, made to stay from morning to night.",
     story:
-      "Every Almaya fragrance begins as a single idea, refined until nothing unnecessary remains. No. I holds the place of that first idea: the scent that will open the collection once its story is told here.",
+      "Crystal For Her opens with a bright spark of yuzu and pomegranate, blooms into peony, lotus and magnolia, and settles into a smooth musk finish. Luxury here is not only the bottle — it is how she feels when she wears it.",
+    notes: {
+      top: ["Yuzu", "Pomegranate"],
+      heart: ["Peony", "Lotus", "Magnolia"],
+      base: ["Musk"],
+    },
     images: [
       {
-        src: "/images/placeholders/product-01-portrait.svg",
-        alt: "Placeholder illustration of an Almaya Scents flacon on a warm paper background",
-        width: 1600,
-        height: 2200,
+        src: "/images/products/crystal-for-her-portrait.jpg",
+        alt: "Crystal For Her perfume bottle by Almaya Scents surrounded by peony, lotus, magnolia, yuzu and pomegranate",
+        width: 1440,
+        height: 1440,
       },
       {
-        src: "/images/placeholders/product-01-detail.svg",
-        alt: "Placeholder detail illustration of a fragrance bottle stopper",
-        width: 1600,
-        height: 1600,
+        src: "/images/products/crystal-for-her-detail.jpg",
+        alt: "Detail of the Crystal For Her bottle and Almaya Scents label",
+        width: 1000,
+        height: 1000,
       },
     ],
     featured: true,
-    placeholder: true,
+    placeholder: false,
   },
   {
-    // PLACEHOLDER — replace with a real Almaya Scents product.
-    slug: "almaya-no-ii",
-    name: "Almaya No. II",
+    slug: "essential-for-him",
+    name: "Essential For Him",
+    category: "For Him · 50ml",
     description:
-      "A quieter register of the same signature — softer in its opening, unhurried in the way it stays.",
+      "A breath of fresh air for everyday elegance — vibrant citrus lifted by a deep woody finish, made to stay sharp from morning to night.",
     story:
-      "No. II reserves space for the second chapter of the collection. Its verified description, imagery and composition will appear here once provided from Almaya's own materials.",
+      "Essential For Him is reimagined for the modern man who wants presence without effort. Whether the day calls for a meeting or an easy evening out, it is a signature that feels fresh, clean and considered.",
+    notes: {
+      top: ["Citrus"],
+      base: ["Wood"],
+    },
     images: [
       {
-        src: "/images/placeholders/product-02-portrait.svg",
-        alt: "Placeholder illustration of a rounded Almaya Scents flacon on an ivory background",
-        width: 1600,
-        height: 2200,
+        src: "/images/products/essential-for-him-portrait.jpg",
+        alt: "Essential For Him 50ml perfume bottle by Almaya Scents on marble in soft daylight",
+        width: 1440,
+        height: 1440,
       },
       {
-        src: "/images/placeholders/product-02-detail.svg",
-        alt: "Placeholder detail illustration of concentric glasswork",
-        width: 1600,
-        height: 1600,
+        src: "/images/products/essential-for-him-detail.jpg",
+        alt: "Lifestyle still for Essential For Him — fresh light, linen and quiet morning atmosphere",
+        width: 1440,
+        height: 1440,
       },
     ],
     featured: true,
-    placeholder: true,
-  },
-  {
-    // PLACEHOLDER — replace with a real Almaya Scents product.
-    slug: "almaya-no-iii",
-    name: "Almaya No. III",
-    description:
-      "Structured and deliberate — a composition that favors clarity over noise.",
-    story:
-      "No. III stands in for the third fragrance of the collection, awaiting its authentic name, photography and story.",
-    images: [
-      {
-        src: "/images/placeholders/product-03-portrait.svg",
-        alt: "Placeholder illustration of a tall slim Almaya Scents flacon in warm grey tones",
-        width: 1600,
-        height: 2200,
-      },
-      {
-        src: "/images/placeholders/product-03-detail.svg",
-        alt: "Placeholder detail illustration of a faceted bottle shoulder",
-        width: 1600,
-        height: 1600,
-      },
-    ],
-    featured: true,
-    placeholder: true,
-  },
-  {
-    // PLACEHOLDER — replace with a real Almaya Scents product.
-    slug: "almaya-no-iv",
-    name: "Almaya No. IV",
-    description:
-      "The collection's closing statement — presence without insistence.",
-    story:
-      "No. IV completes the placeholder collection. Replace this entry with a verified Almaya Scents fragrance when its public details are available.",
-    images: [
-      {
-        src: "/images/placeholders/product-04-portrait.svg",
-        alt: "Placeholder illustration of a broad-shouldered Almaya Scents flacon on a deep charcoal background",
-        width: 1600,
-        height: 2200,
-      },
-      {
-        src: "/images/placeholders/product-04-detail.svg",
-        alt: "Placeholder detail illustration of light falling across glass",
-        width: 1600,
-        height: 1600,
-      },
-    ],
-    placeholder: true,
+    placeholder: false,
   },
 ];
 
@@ -266,19 +200,19 @@ export const almayaContent: BrandContent = {
   tagline: "Fragrance, remembered.",
   description:
     "Almaya Scents is a fragrance house devoted to refined, memorable perfumery — compositions made with intention, presented without excess.",
-  announcement: "Discover the world of Almaya Scents.",
+  announcement: "Discover Crystal For Her and Essential For Him.",
 
   hero: {
     image: {
-      src: "/images/placeholders/hero-01.svg",
-      alt: "Placeholder artwork of an Almaya Scents flacon in soft morning light",
+      src: "/images/hero/hero-01.jpg",
+      alt: "Crystal For Her by Almaya Scents — elegant bottle with floral and citrus notes",
       width: 2400,
       height: 1600,
     },
     eyebrow: "Almaya Scents",
     headline: "Fragrance, remembered.",
     subline:
-      "A collection of compositions made with intention — worn close, kept quietly, remembered longer.",
+      "Two signatures from the house — Crystal For Her and Essential For Him — worn close, kept quietly, remembered longer.",
     primaryCta: { label: "Discover the Collection", href: "/products/" },
     secondaryCta: { label: "Explore Our Story", href: "/about/" },
   },
@@ -287,42 +221,42 @@ export const almayaContent: BrandContent = {
     eyebrow: "The Collection",
     title: "Featured Scents",
     intro:
-      "Three compositions that carry the Almaya signature — presented as the collection takes its final shape.",
+      "Crystal For Her and Essential For Him — two compositions that carry the Almaya signature.",
   },
 
   stories: [
     {
-      eyebrow: "Chapter One",
-      title: "Almaya No. I",
-      body: "The opening of the collection. A composition built on restraint, where every element earns its place — nothing added for effect, nothing kept out of habit.",
-      cta: { label: "Discover No. I", href: "/products/almaya-no-i/" },
+      eyebrow: "For Her",
+      title: "Crystal For Her",
+      body: "Fresh energy meets floral depth. Yuzu and pomegranate open the composition; peony, lotus and magnolia bloom at the heart; musk closes the day with a smooth, lasting finish.",
+      cta: { label: "Discover Crystal For Her", href: "/products/crystal-for-her/" },
       image: {
-        src: "/images/placeholders/editorial-01.svg",
-        alt: "Placeholder still-life illustration of two Almaya Scents flacons beside an architectural line",
+        src: "/images/editorial/editorial-01.jpg",
+        alt: "Crystal For Her perfume still life with peony, lotus, magnolia and citrus",
         width: 2400,
         height: 1350,
       },
-      productSlug: "almaya-no-i",
+      productSlug: "crystal-for-her",
     },
     {
-      eyebrow: "Chapter Two",
-      title: "Almaya No. II",
-      body: "A quieter register of the same signature. Where No. I states, No. II suggests — softer in its opening, unhurried in the way it stays with you.",
-      cta: { label: "Discover No. II", href: "/products/almaya-no-ii/" },
+      eyebrow: "For Him",
+      title: "Essential For Him",
+      body: "Everyday elegance in a crisp register — vibrant citrus with a deep woody close. A signature for mornings that turn into nights, without losing their edge.",
+      cta: { label: "Discover Essential For Him", href: "/products/essential-for-him/" },
       image: {
-        src: "/images/placeholders/editorial-02.svg",
-        alt: "Placeholder still-life illustration of a rounded flacon under a soft arc of light",
+        src: "/images/editorial/editorial-02.jpg",
+        alt: "Essential For Him bottle by Almaya Scents in bright natural light",
         width: 2400,
         height: 1350,
       },
-      productSlug: "almaya-no-ii",
+      productSlug: "essential-for-him",
     },
   ],
 
   fullBleed: {
     image: {
-      src: "/images/placeholders/editorial-moment.svg",
-      alt: "Placeholder wide illustration of a fragrance bottle silhouette against a dusk horizon",
+      src: "/images/editorial/editorial-moment.jpg",
+      alt: "Fresh morning atmosphere for Essential For Him by Almaya Scents",
       width: 2400,
       height: 1350,
     },
@@ -334,36 +268,36 @@ export const almayaContent: BrandContent = {
     title: "The Almaya Frame",
     images: [
       {
-        src: "/images/placeholders/gallery-01.svg",
-        alt: "Placeholder portrait illustration of a flacon on a pedestal",
+        src: "/images/editorial/gallery-01.jpg",
+        alt: "Crystal For Her bottle framed in soft beige light",
         width: 1600,
         height: 2200,
         ratio: "portrait",
       },
       {
-        src: "/images/placeholders/gallery-02.svg",
-        alt: "Placeholder square illustration of overlapping glass circles",
-        width: 1600,
-        height: 1600,
+        src: "/images/editorial/gallery-02.jpg",
+        alt: "Close view of the Crystal For Her bottle and label",
+        width: 1000,
+        height: 1000,
         ratio: "square",
       },
       {
-        src: "/images/placeholders/gallery-03.svg",
-        alt: "Placeholder landscape illustration of three bottle silhouettes in a row",
+        src: "/images/editorial/gallery-03.jpg",
+        alt: "Essential For Him bottle on marble with soft shadows",
         width: 2400,
         height: 1350,
         ratio: "landscape",
       },
       {
-        src: "/images/placeholders/gallery-04.svg",
-        alt: "Placeholder square illustration of a stopper viewed from above",
+        src: "/images/editorial/gallery-04.jpg",
+        alt: "Quiet morning still life for Essential For Him",
         width: 1600,
         height: 1600,
         ratio: "square",
       },
       {
-        src: "/images/placeholders/gallery-05.svg",
-        alt: "Placeholder portrait illustration of light falling across a tall flacon",
+        src: "/images/editorial/gallery-05.jpg",
+        alt: "Essential For Him perfume bottle in tall editorial crop",
         width: 1600,
         height: 2200,
         ratio: "portrait",
@@ -379,8 +313,8 @@ export const almayaContent: BrandContent = {
       "The house works slowly and edits hard. Each composition is refined until nothing unnecessary remains, then presented plainly — without noise, without excess, without apology.",
     ],
     image: {
-      src: "/images/placeholders/brand-01.svg",
-      alt: "Placeholder portrait illustration of an Almaya Scents flacon in shadow",
+      src: "/images/brand/brand-01.jpg",
+      alt: "Essential For Him by Almaya Scents — portrait still of the bottle",
       width: 1600,
       height: 2200,
     },
@@ -398,7 +332,7 @@ export const almayaContent: BrandContent = {
   collectionPage: {
     title: "The Collection",
     intro:
-      "Every Almaya composition is made with intention and presented without excess. The collection is shown here as it takes its final shape.",
+      "Crystal For Her and Essential For Him — two Almaya compositions made with intention and presented without excess.",
   },
 
   aboutPage: {
@@ -420,8 +354,8 @@ export const almayaContent: BrandContent = {
       },
     ],
     image: {
-      src: "/images/placeholders/brand-02.svg",
-      alt: "Placeholder landscape illustration of a fragrance atelier still life",
+      src: "/images/brand/brand-02.jpg",
+      alt: "Crystal For Her by Almaya Scents in a wide editorial still",
       width: 2400,
       height: 1350,
     },

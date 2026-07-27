@@ -5,9 +5,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProductCard } from "@/components/products/ProductCard";
 
 /**
- * Asymmetric editorial arrangement of the featured products: three
- * columns with staggered vertical offsets on desktop, a single calm
- * column on mobile.
+ * Editorial arrangement of the featured products: a calm two-up on
+ * desktop when the collection is small, staggered three-up otherwise.
  */
 export function FeaturedCollection() {
   const products = getFeaturedProducts().slice(0, 3);
@@ -15,8 +14,13 @@ export function FeaturedCollection() {
 
   if (products.length === 0) return null;
 
-  const offsets = ["lg:mt-0", "lg:mt-20", "lg:mt-40"];
-  const widths = ["lg:col-span-5", "lg:col-span-4", "lg:col-span-3"];
+  const pair = products.length === 2;
+  const offsets = pair
+    ? ["lg:mt-0", "lg:mt-16"]
+    : ["lg:mt-0", "lg:mt-20", "lg:mt-40"];
+  const widths = pair
+    ? ["lg:col-span-5 lg:col-start-2", "lg:col-span-5"]
+    : ["lg:col-span-5", "lg:col-span-4", "lg:col-span-3"];
 
   return (
     <section aria-labelledby="featured-heading" className="section-gap">
@@ -37,7 +41,9 @@ export function FeaturedCollection() {
               key={product.slug}
               delay={index * 0.1}
               className={`${widths[index]} ${offsets[index]} ${
-                index === 2 ? "sm:col-span-2 sm:mx-auto sm:max-w-md lg:col-span-3 lg:mx-0 lg:max-w-none" : ""
+                !pair && index === 2
+                  ? "sm:col-span-2 sm:mx-auto sm:max-w-md lg:col-span-3 lg:mx-0 lg:max-w-none"
+                  : ""
               }`}
             >
               <ProductCard product={product} />

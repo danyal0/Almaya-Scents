@@ -9,24 +9,19 @@ brand copy:
 | `src/content/site-config.ts`    | Site name/titles, Instagram URL, env wiring     |
 | `src/content/navigation.ts`     | Header, footer and legal navigation             |
 
-## Current content status (important)
+## Current content status
 
-The Almaya Scents Instagram profile requires authentication, and no other
-verified public source was found, so the manifest ships with:
+The collection currently features two verified Almaya Scents products drawn
+from the official Instagram (@almayascents):
 
-- **Placeholder products** `Almaya No. I–IV` (flagged `placeholder: true`)
-  — numbered placeholders, deliberately not invented "real-sounding"
-  product names.
-- **Original placeholder artwork** (line-art SVGs) — no Instagram images
-  are hotlinked, no photography is fabricated.
-- **No scent notes, prices, sizes, concentrations, ingredients or
-  availability claims** anywhere. The UI omits those sections when the
-  fields are absent.
-- Brand/about copy written as original, philosophy-level editorial voice
-  with **no factual claims** (no founding dates, locations, perfumers or
-  manufacturing details).
+- **Crystal For Her** — floral-citrus composition with published top / heart / base notes
+- **Essential For Him** — fresh citrus–woody composition (50ml)
 
-## Replacing a placeholder product
+Product photography is stored locally under `public/images/`. No Instagram
+CDN URLs are hotlinked. Prices are not shown on the site; orders are
+directed to Instagram inquiry.
+
+## Adding or replacing a product
 
 1. Add authorized images to `public/images/products/` (see
    `public/content/README.md` for names/dimensions).

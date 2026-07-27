@@ -110,7 +110,7 @@ test.describe("page quality", () => {
   test("sitemap and robots are exported", async ({ request }) => {
     const sitemap = await request.get(`http://localhost:4173${BASE}/sitemap.xml`);
     expect(sitemap.status()).toBe(200);
-    expect(await sitemap.text()).toContain("/products/almaya-no-i/");
+    expect(await sitemap.text()).toContain("/products/crystal-for-her/");
 
     const robots = await request.get(`http://localhost:4173${BASE}/robots.txt`);
     expect(robots.status()).toBe(200);
