@@ -21,9 +21,7 @@ const FOCUSABLE_SELECTOR = [
 
 /** All keyboard-focusable elements inside a container, in DOM order. */
 export function getFocusableElements(container: HTMLElement): HTMLElement[] {
-  return Array.from(
-    container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-  ).filter((element) => element.offsetParent !== null || element === document.activeElement);
+  return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
 }
 
 /**

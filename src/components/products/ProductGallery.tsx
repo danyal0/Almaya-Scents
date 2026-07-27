@@ -39,6 +39,9 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
       <div className="md:hidden">
         <div
           ref={trackRef}
+          role="region"
+          aria-label={`${productName} images, scroll horizontally`}
+          tabIndex={0}
           className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           onScroll={(event) => {
             const el = event.currentTarget;

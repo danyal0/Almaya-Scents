@@ -14,7 +14,8 @@
   --paper: #f5f2ec;
   --ivory: #fcfaf6;
   --warm-gray: #d8d2c8;
-  --muted: #77736c;
+  /* 5.4:1 on ivory, 5.0:1 on paper — WCAG AA for body text. */
+  --muted: #6b675f;
   --line: rgba(17, 17, 17, 0.14);
   --line-strong: rgba(17, 17, 17, 0.32);
   --white: #ffffff;

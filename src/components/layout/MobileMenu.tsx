@@ -29,7 +29,12 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
     if (!panel) return;
 
     const previouslyFocused = document.activeElement as HTMLElement | null;
+    // Deferred so the focus survives the synthetic mouse events that
+    // follow a touch tap (which would otherwise blur it).
     closeButtonRef.current?.focus();
+    const focusTimer = window.setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 50);
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -44,6 +49,7 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
     document.documentElement.style.overflow = "hidden";
 
     return () => {
+      window.clearTimeout(focusTimer);
       document.removeEventListener("keydown", handleKeyDown);
       document.documentElement.style.overflow = "";
       previouslyFocused?.focus();
@@ -56,6 +62,7 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
         open ? "visible" : "invisible"
       }`}
       aria-hidden={!open}
+      inert={!open}
     >
       {/* Backdrop */}
       <div

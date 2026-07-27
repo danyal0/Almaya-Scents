@@ -35,12 +35,28 @@ export function Lightbox({ images, index, onIndexChange, onClose }: LightboxProp
     [count, onIndexChange],
   );
 
+  // Focus management and scroll locking — once per open lightbox.
+  useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    // Deferred so the focus survives the synthetic mouse events that
+    // follow a touch tap (which would otherwise blur it).
+    closeButtonRef.current?.focus();
+    const focusTimer = window.setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 50);
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.documentElement.style.overflow = "";
+      previouslyFocused?.focus();
+    };
+  }, []);
+
+  // Keyboard behaviour — tracks the current index.
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-
-    const previouslyFocused = document.activeElement as HTMLElement | null;
-    closeButtonRef.current?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -58,13 +74,7 @@ export function Lightbox({ images, index, onIndexChange, onClose }: LightboxProp
     };
 
     document.addEventListener("keydown", handleKeyDown);
-    document.documentElement.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.documentElement.style.overflow = "";
-      previouslyFocused?.focus();
-    };
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [goTo, index, onClose]);
 
   if (!current) return null;
