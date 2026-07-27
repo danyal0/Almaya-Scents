@@ -309,7 +309,7 @@ export const almayaContent: BrandContent = {
       },
       {
         src: "/images/editorial/gallery-05-v2.jpg",
-        alt: "Crystal For Her held in a dark car interior with warm amber light",
+        alt: "Rows of Crystal For Her bottles on warm wood in soft focus",
         width: 1600,
         height: 2200,
         ratio: "portrait",

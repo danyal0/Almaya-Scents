@@ -5,22 +5,14 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProductCard } from "@/components/products/ProductCard";
 
 /**
- * Editorial arrangement of the featured products: a calm two-up on
- * desktop when the collection is small, staggered three-up otherwise.
+ * Even two-up (or three-up) featured products — equal column widths and
+ * matching card heights so the row reads as one calm band.
  */
 export function FeaturedCollection() {
   const products = getFeaturedProducts().slice(0, 3);
   const { featured } = almayaContent;
 
   if (products.length === 0) return null;
-
-  const pair = products.length === 2;
-  const offsets = pair
-    ? ["lg:mt-0", "lg:mt-16"]
-    : ["lg:mt-0", "lg:mt-20", "lg:mt-40"];
-  const widths = pair
-    ? ["lg:col-span-5 lg:col-start-2", "lg:col-span-5"]
-    : ["lg:col-span-5", "lg:col-span-4", "lg:col-span-3"];
 
   return (
     <section aria-labelledby="featured-heading" className="section-gap">
@@ -35,18 +27,14 @@ export function FeaturedCollection() {
           />
         </Reveal>
 
-        <div className="mt-16 grid grid-cols-1 gap-x-10 gap-y-16 sm:grid-cols-2 lg:grid-cols-12 lg:gap-x-14 xl:gap-x-20">
+        <div
+          className={`mt-16 grid grid-cols-1 items-stretch gap-x-10 gap-y-16 sm:grid-cols-2 ${
+            products.length >= 3 ? "lg:grid-cols-3" : "lg:grid-cols-2 lg:mx-auto lg:max-w-5xl"
+          } lg:gap-x-14`}
+        >
           {products.map((product, index) => (
-            <Reveal
-              key={product.slug}
-              delay={index * 0.1}
-              className={`${widths[index]} ${offsets[index]} ${
-                !pair && index === 2
-                  ? "sm:col-span-2 sm:mx-auto sm:max-w-md lg:col-span-3 lg:mx-0 lg:max-w-none"
-                  : ""
-              }`}
-            >
-              <ProductCard product={product} />
+            <Reveal key={product.slug} delay={index * 0.1} className="h-full">
+              <ProductCard product={product} className="h-full" />
             </Reveal>
           ))}
         </div>

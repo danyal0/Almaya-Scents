@@ -16,6 +16,7 @@ type ProductCardProps = {
 /**
  * Fully clickable, keyboard-accessible product card with a restrained
  * hover treatment: a slow image scale and an underline reveal.
+ * Fixed media ratio + clamped copy keep sibling cards equal height.
  */
 export function ProductCard({
   product,
@@ -28,20 +29,21 @@ export function ProductCard({
   return (
     <Link
       href={`/products/${product.slug}/`}
-      className={cn("group block", className)}
+      className={cn("group flex h-full flex-col", className)}
       aria-label={`${product.name} — view details`}
     >
-      <div className="media-frame aspect-[4/5]">
+      <div className="media-frame aspect-[4/5] w-full shrink-0">
         <ImageWithFallback
           src={image.src}
           alt={image.alt}
           width={image.width}
           height={image.height}
           priority={priority}
+          className="object-cover object-center"
         />
       </div>
 
-      <div className="mt-6 flex flex-col gap-2">
+      <div className="mt-6 flex flex-1 flex-col gap-2">
         <Heading className="font-serif text-heading font-light text-ink">
           {product.name}
         </Heading>
@@ -55,10 +57,10 @@ export function ProductCard({
             {product.price}
           </p>
         ) : null}
-        <p className="max-w-md text-pretty text-body-sm text-muted">
+        <p className="line-clamp-3 max-w-md text-pretty text-body-sm text-muted">
           {product.description}
         </p>
-        <span className="link-underline mt-3 self-start font-sans text-meta uppercase tracking-[0.18em] text-ink">
+        <span className="link-underline mt-auto self-start pt-3 font-sans text-meta uppercase tracking-[0.18em] text-ink">
           Discover
         </span>
       </div>

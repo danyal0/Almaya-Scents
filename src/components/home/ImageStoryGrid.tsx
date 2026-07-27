@@ -3,30 +3,14 @@
 import { useState } from "react";
 
 import { almayaContent } from "@/content/almaya-content";
-import { cn } from "@/lib/utils";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
-const ratioClasses = {
-  portrait: "aspect-[8/11]",
-  landscape: "aspect-[16/9]",
-  square: "aspect-square",
-} as const;
-
-/** Desktop mosaic spans for the five gallery images. */
-const spanClasses = [
-  "md:col-span-4",
-  "md:col-span-4 md:mt-16",
-  "md:col-span-4 md:mt-32",
-  "md:col-span-5 md:-mt-10",
-  "md:col-span-7",
-];
-
 /**
- * Editorial image mosaic. Each frame opens an accessible lightbox; the
- * grid itself remains fully usable without it.
+ * Even editorial grid — every frame uses the same 4:5 height so the
+ * section stays level across mobile and desktop.
  */
 export function ImageStoryGrid() {
   const { gallery } = almayaContent;
@@ -43,9 +27,9 @@ export function ImageStoryGrid() {
           />
         </Reveal>
 
-        <ul className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-12 md:items-start md:gap-8">
+        <ul className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
           {gallery.images.map((image, index) => (
-            <li key={image.src} className={spanClasses[index] ?? "md:col-span-4"}>
+            <li key={image.src}>
               <Reveal delay={(index % 3) * 0.08}>
                 <button
                   type="button"
@@ -54,14 +38,13 @@ export function ImageStoryGrid() {
                   aria-label={`Open image: ${image.alt}`}
                   aria-haspopup="dialog"
                 >
-                  <span
-                    className={cn("media-frame block", ratioClasses[image.ratio])}
-                  >
+                  <span className="media-frame block aspect-[4/5] w-full">
                     <ImageWithFallback
                       src={image.src}
                       alt={image.alt}
                       width={image.width}
                       height={image.height}
+                      className="object-cover object-center"
                     />
                   </span>
                 </button>
