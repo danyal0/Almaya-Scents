@@ -9,9 +9,9 @@ import { buildMetadata } from "@/lib/seo";
 
 import "@/styles/globals.css";
 
+// Variable font: one file per style instead of one per weight.
 const displayFont = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
   style: ["normal", "italic"],
   variable: "--font-display",
   display: "swap",

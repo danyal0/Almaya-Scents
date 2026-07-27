@@ -8,6 +8,8 @@ type ProductCardProps = {
   product: Product;
   /** Heading level of the product name within the surrounding hierarchy. */
   headingLevel?: "h2" | "h3";
+  /** Eager-load the image (for cards rendered above the fold). */
+  priority?: boolean;
   className?: string;
 };
 
@@ -18,6 +20,7 @@ type ProductCardProps = {
 export function ProductCard({
   product,
   headingLevel: Heading = "h3",
+  priority = false,
   className,
 }: ProductCardProps) {
   const image = product.images[0];
@@ -34,6 +37,7 @@ export function ProductCard({
           alt={image.alt}
           width={image.width}
           height={image.height}
+          priority={priority}
         />
       </div>
 

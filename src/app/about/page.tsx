@@ -19,28 +19,27 @@ export default function AboutPage() {
   return (
     <div className="section-gap">
       <div className="container-editorial">
-        <Reveal>
-          <div className="max-w-4xl">
-            <p className="eyebrow">About Almaya Scents</p>
-            <h1 className="mt-5 font-serif text-display-l font-light text-ink">
-              {aboutPage.title}
-            </h1>
-            <p className="mt-8 max-w-2xl text-body text-charcoal/80">
-              {aboutPage.intro}
-            </p>
-          </div>
-        </Reveal>
+        <div className="rise-in max-w-4xl">
+          <p className="eyebrow">About Almaya Scents</p>
+          <h1 className="mt-5 font-serif text-display-l font-light text-ink">
+            {aboutPage.title}
+          </h1>
+          <p className="mt-8 max-w-2xl text-body text-charcoal/80">
+            {aboutPage.intro}
+          </p>
+        </div>
 
-        <Reveal className="mt-16 md:mt-24">
+        <div className="rise-in rise-in-2 mt-16 md:mt-24">
           <div className="media-frame aspect-[16/9]">
             <ImageWithFallback
               src={aboutPage.image.src}
               alt={aboutPage.image.alt}
               width={aboutPage.image.width}
               height={aboutPage.image.height}
+              priority
             />
           </div>
-        </Reveal>
+        </div>
 
         <div className="mt-16 grid grid-cols-1 gap-14 md:mt-24 md:grid-cols-3 md:gap-10">
           {aboutPage.sections.map((section, index) => (

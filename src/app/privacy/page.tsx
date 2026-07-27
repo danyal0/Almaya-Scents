@@ -38,18 +38,16 @@ export default function PrivacyPage() {
   return (
     <div className="section-gap">
       <div className="container-editorial">
-        <Reveal>
-          <div className="max-w-3xl">
-            <p className="eyebrow">Legal</p>
-            <h1 className="mt-5 font-serif text-display-l font-light text-ink">
-              Privacy
-            </h1>
-            <p className="mt-8 max-w-xl text-body text-charcoal/80">
-              A plain-language description of how this website handles your
-              information.
-            </p>
-          </div>
-        </Reveal>
+        <div className="rise-in max-w-3xl">
+          <p className="eyebrow">Legal</p>
+          <h1 className="mt-5 font-serif text-display-l font-light text-ink">
+            Privacy
+          </h1>
+          <p className="mt-8 max-w-xl text-body text-charcoal/80">
+            A plain-language description of how this website handles your
+            information.
+          </p>
+        </div>
 
         <div className="mt-16 flex max-w-2xl flex-col gap-12 md:mt-20">
           {sections.map((section, index) => (

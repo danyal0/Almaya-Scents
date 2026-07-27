@@ -170,6 +170,38 @@ body {
   animation: hero-settle 2.2s var(--ease-out-expo) both;
 }
 
+/*
+ * CSS-only entrance for above-the-fold hero content. Runs before
+ * hydration so the LCP element paints immediately; JS reveals are
+ * reserved for below-the-fold sections.
+ */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise-in {
+  animation: rise-in var(--duration-reveal) var(--ease-out-expo) both;
+}
+
+.rise-in-2 {
+  animation-delay: 120ms;
+}
+
+.rise-in-3 {
+  animation-delay: 240ms;
+}
+
+.rise-in-4 {
+  animation-delay: 360ms;
+}
+
 /* Skeleton shimmer — used while gallery / lightbox media resolves. */
 @keyframes skeleton-pulse {
   0%,
@@ -199,7 +231,8 @@ body {
     scroll-behavior: auto !important;
   }
 
-  .hero-settle {
+  .hero-settle,
+  .rise-in {
     animation: none;
   }
 }

@@ -24,17 +24,15 @@ export default function ContactPage() {
   return (
     <div className="section-gap">
       <div className="container-editorial">
-        <Reveal>
-          <div className="max-w-3xl">
-            <p className="eyebrow">Reach the House</p>
-            <h1 className="mt-5 font-serif text-display-l font-light text-ink">
-              {contactPage.title}
-            </h1>
-            <p className="mt-8 max-w-xl text-body text-charcoal/80">
-              {contactPage.intro}
-            </p>
-          </div>
-        </Reveal>
+        <div className="rise-in max-w-3xl">
+          <p className="eyebrow">Reach the House</p>
+          <h1 className="mt-5 font-serif text-display-l font-light text-ink">
+            {contactPage.title}
+          </h1>
+          <p className="mt-8 max-w-xl text-body text-charcoal/80">
+            {contactPage.intro}
+          </p>
+        </div>
 
         <div className="mt-16 grid max-w-4xl grid-cols-1 gap-10 md:mt-24 md:grid-cols-2">
           <Reveal>

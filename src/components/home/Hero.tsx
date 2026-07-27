@@ -1,12 +1,14 @@
 import { almayaContent } from "@/content/almaya-content";
 import { Button } from "@/components/ui/Button";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
-import { Reveal } from "@/components/ui/Reveal";
 
 /**
  * Full-viewport cinematic hero. The section is pulled up beneath the
  * transparent header; a soft ivory gradient at the base keeps the
  * editorial copy legible over any imagery.
+ *
+ * Entrance motion is CSS-only (`rise-in`) so the headline — the page's
+ * LCP element — paints without waiting for hydration.
  */
 export function Hero() {
   const { hero } = almayaContent;
@@ -30,32 +32,24 @@ export function Hero() {
 
       <div className="container-editorial relative pb-16 pt-[calc(var(--header-height)+4rem)] md:pb-24">
         <div className="max-w-3xl">
-          <Reveal>
-            <p className="eyebrow">{hero.eyebrow}</p>
-          </Reveal>
-          <Reveal delay={0.12}>
-            <h1
-              id="hero-heading"
-              className="mt-5 font-serif text-display-xl font-light text-ink"
-            >
-              {hero.headline}
-            </h1>
-          </Reveal>
-          <Reveal delay={0.24}>
-            <p className="mt-6 max-w-xl text-body text-charcoal/80">
-              {hero.subline}
-            </p>
-          </Reveal>
-          <Reveal delay={0.36}>
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Button href={hero.primaryCta.href}>{hero.primaryCta.label}</Button>
-              {hero.secondaryCta ? (
-                <Button href={hero.secondaryCta.href} variant="outline">
-                  {hero.secondaryCta.label}
-                </Button>
-              ) : null}
-            </div>
-          </Reveal>
+          <p className="rise-in eyebrow">{hero.eyebrow}</p>
+          <h1
+            id="hero-heading"
+            className="rise-in rise-in-2 mt-5 font-serif text-display-xl font-light text-ink"
+          >
+            {hero.headline}
+          </h1>
+          <p className="rise-in rise-in-3 mt-6 max-w-xl text-body text-charcoal/80">
+            {hero.subline}
+          </p>
+          <div className="rise-in rise-in-4 mt-10 flex flex-wrap items-center gap-4">
+            <Button href={hero.primaryCta.href}>{hero.primaryCta.label}</Button>
+            {hero.secondaryCta ? (
+              <Button href={hero.secondaryCta.href} variant="outline">
+                {hero.secondaryCta.label}
+              </Button>
+            ) : null}
+          </div>
         </div>
       </div>
     </section>

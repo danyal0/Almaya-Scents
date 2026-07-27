@@ -13,6 +13,7 @@ import { createServer } from "node:http";
 import { existsSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
+import { gzipSync } from "node:zlib";
 
 const args = process.argv.slice(2);
 const getArg = (name, fallback) => {
@@ -84,12 +85,26 @@ const server = createServer(async (req, res) => {
     return;
   }
 
-  const body = await readFile(filePath);
-  const isNotFoundFallback = filePath.endsWith("404.html") && pathname !== "/404.html";
-  res.writeHead(isNotFoundFallback ? 404 : 200, {
-    "Content-Type": MIME_TYPES[extname(filePath)] ?? "application/octet-stream",
+  let body = await readFile(filePath);
+  const contentType =
+    MIME_TYPES[extname(filePath)] ?? "application/octet-stream";
+  const headers = {
+    "Content-Type": contentType,
     "Cache-Control": "no-store",
-  });
+  };
+
+  // GitHub Pages serves text assets compressed; mirror that locally so
+  // performance measurements are representative.
+  const compressible = /^(text\/|application\/(json|xml|javascript))|image\/svg/.test(
+    contentType,
+  );
+  if (compressible && /\bgzip\b/.test(req.headers["accept-encoding"] ?? "")) {
+    body = gzipSync(body);
+    headers["Content-Encoding"] = "gzip";
+  }
+
+  const isNotFoundFallback = filePath.endsWith("404.html") && pathname !== "/404.html";
+  res.writeHead(isNotFoundFallback ? 404 : 200, headers);
   res.end(body);
 });
 

@@ -22,14 +22,12 @@ export default function JournalPage() {
   return (
     <div className="section-gap">
       <div className="container-editorial">
-        <Reveal>
-          <div className="max-w-3xl">
-            <p className="eyebrow">Notes from the House</p>
-            <h1 className="mt-5 font-serif text-display-l font-light text-ink">
-              {journalPage.title}
-            </h1>
-          </div>
-        </Reveal>
+        <div className="rise-in max-w-3xl">
+          <p className="eyebrow">Notes from the House</p>
+          <h1 className="mt-5 font-serif text-display-l font-light text-ink">
+            {journalPage.title}
+          </h1>
+        </div>
 
         <Reveal className="mt-20 md:mt-28">
           <div className="mx-auto flex max-w-2xl flex-col items-center gap-8 border-y border-line py-20 text-center md:py-28">

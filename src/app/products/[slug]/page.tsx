@@ -49,12 +49,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <div className="section-gap">
       <div className="container-editorial">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-20">
-          <Reveal>
+          <div className="rise-in">
             <ProductGallery images={product.images} productName={product.name} />
-          </Reveal>
-          <Reveal delay={0.1}>
+          </div>
+          <div className="rise-in rise-in-2">
             <ProductDetails product={product} />
-          </Reveal>
+          </div>
         </div>
 
         {related.length > 0 ? (
