@@ -146,15 +146,15 @@ const products: Product[] = [
     images: [
       {
         src: "/images/products/crystal-for-her-portrait.jpg",
-        alt: "Crystal For Her perfume bottle by Almaya Scents surrounded by peony, lotus, magnolia, yuzu and pomegranate",
-        width: 1440,
-        height: 1440,
+        alt: "Rows of Crystal For Her bottles in soft pink light on warm wood",
+        width: 1600,
+        height: 2200,
       },
       {
         src: "/images/products/crystal-for-her-detail.jpg",
-        alt: "Detail of the Crystal For Her bottle and Almaya Scents label",
-        width: 1000,
-        height: 1000,
+        alt: "Hand holding Crystal For Her beside rose-gold vanity details",
+        width: 1600,
+        height: 1600,
       },
     ],
     featured: true,
@@ -165,25 +165,26 @@ const products: Product[] = [
     name: "Essential For Him",
     category: "For Him · 50ml",
     description:
-      "A breath of fresh air for everyday elegance — vibrant citrus lifted by a deep woody finish, made to stay sharp from morning to night.",
+      "A breath of fresh air for everyday elegance — bergamot and tomato leaf lifted by rose pepper, grounded in sandalwood and patchouli.",
     story:
-      "Essential For Him is reimagined for the modern man who wants presence without effort. Whether the day calls for a meeting or an easy evening out, it is a signature that feels fresh, clean and considered.",
+      "Essential For Him is made for the modern man who wants presence without effort. Whether the day calls for a meeting or an easy evening out, it is a signature that feels fresh, clean and considered.",
     notes: {
-      top: ["Citrus"],
-      base: ["Wood"],
+      top: ["Bergamot Cassia", "Tomato Leaf"],
+      heart: ["Rose Pepper"],
+      base: ["Sandalwood", "Patchouli"],
     },
     images: [
       {
         src: "/images/products/essential-for-him-portrait.jpg",
-        alt: "Essential For Him 50ml perfume bottle by Almaya Scents on marble in soft daylight",
-        width: 1440,
-        height: 1440,
+        alt: "Essential For Him bottle on linen with fresh leaves and bright daylight",
+        width: 1600,
+        height: 2200,
       },
       {
         src: "/images/products/essential-for-him-detail.jpg",
-        alt: "Lifestyle still for Essential For Him — fresh light, linen and quiet morning atmosphere",
-        width: 1440,
-        height: 1440,
+        alt: "Hands holding Essential For Him against a warm leather and wood setting",
+        width: 1600,
+        height: 1600,
       },
     ],
     featured: true,
@@ -204,8 +205,8 @@ export const almayaContent: BrandContent = {
 
   hero: {
     image: {
-      src: "/images/hero/hero-01.jpg",
-      alt: "Crystal For Her by Almaya Scents — elegant bottle with floral and citrus notes",
+      src: "/images/placeholders/hero-01.svg",
+      alt: "Minimal Almaya Scents fragrance flacon in soft morning light",
       width: 2400,
       height: 1600,
     },
@@ -232,7 +233,7 @@ export const almayaContent: BrandContent = {
       cta: { label: "Discover Crystal For Her", href: "/products/crystal-for-her/" },
       image: {
         src: "/images/editorial/editorial-01.jpg",
-        alt: "Crystal For Her perfume still life with peony, lotus, magnolia and citrus",
+        alt: "Crystal For Her held in soft champagne satin light",
         width: 2400,
         height: 1350,
       },
@@ -241,11 +242,11 @@ export const almayaContent: BrandContent = {
     {
       eyebrow: "For Him",
       title: "Essential For Him",
-      body: "Everyday elegance in a crisp register — vibrant citrus with a deep woody close. A signature for mornings that turn into nights, without losing their edge.",
+      body: "Everyday elegance in a crisp register — bergamot and tomato leaf opening into rose pepper, with sandalwood and patchouli beneath. A signature for mornings that turn into nights.",
       cta: { label: "Discover Essential For Him", href: "/products/essential-for-him/" },
       image: {
         src: "/images/editorial/editorial-02.jpg",
-        alt: "Essential For Him bottle by Almaya Scents in bright natural light",
+        alt: "Essential For Him held against deep embroidered black formalwear",
         width: 2400,
         height: 1350,
       },
@@ -256,7 +257,7 @@ export const almayaContent: BrandContent = {
   fullBleed: {
     image: {
       src: "/images/editorial/editorial-moment.jpg",
-      alt: "Fresh morning atmosphere for Essential For Him by Almaya Scents",
+      alt: "Rows of Almaya Scents Crystal For Her bottles on warm wood",
       width: 2400,
       height: 1350,
     },
@@ -269,35 +270,35 @@ export const almayaContent: BrandContent = {
     images: [
       {
         src: "/images/editorial/gallery-01.jpg",
-        alt: "Crystal For Her bottle framed in soft beige light",
+        alt: "Crystal For Her in a rose-gold vanity still life",
         width: 1600,
         height: 2200,
         ratio: "portrait",
       },
       {
         src: "/images/editorial/gallery-02.jpg",
-        alt: "Close view of the Crystal For Her bottle and label",
-        width: 1000,
-        height: 1000,
+        alt: "Crystal For Her bottle resting in clear rippled water",
+        width: 1600,
+        height: 1600,
         ratio: "square",
       },
       {
         src: "/images/editorial/gallery-03.jpg",
-        alt: "Essential For Him bottle on marble with soft shadows",
+        alt: "Rows of Essential For Him bottles in soft focus",
         width: 2400,
         height: 1350,
         ratio: "landscape",
       },
       {
         src: "/images/editorial/gallery-04.jpg",
-        alt: "Quiet morning still life for Essential For Him",
+        alt: "Essential For Him held against a cream cable-knit sweater",
         width: 1600,
         height: 1600,
         ratio: "square",
       },
       {
         src: "/images/editorial/gallery-05.jpg",
-        alt: "Essential For Him perfume bottle in tall editorial crop",
+        alt: "Crystal For Her held in a dark car interior with warm amber light",
         width: 1600,
         height: 2200,
         ratio: "portrait",
@@ -314,7 +315,7 @@ export const almayaContent: BrandContent = {
     ],
     image: {
       src: "/images/brand/brand-01.jpg",
-      alt: "Essential For Him by Almaya Scents — portrait still of the bottle",
+      alt: "Close portrait of Crystal For Her bottles in soft pink light",
       width: 1600,
       height: 2200,
     },
@@ -355,7 +356,7 @@ export const almayaContent: BrandContent = {
     ],
     image: {
       src: "/images/brand/brand-02.jpg",
-      alt: "Crystal For Her by Almaya Scents in a wide editorial still",
+      alt: "Crystal For Her with golden pour and soft pink florals",
       width: 2400,
       height: 1350,
     },

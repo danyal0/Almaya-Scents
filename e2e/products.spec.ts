@@ -39,6 +39,13 @@ test.describe("product pages", () => {
     await expect(page.getByText("Musk")).toBeVisible();
   });
 
+  test("shows published scent notes for Essential For Him", async ({ page }) => {
+    await page.goto(url("/products/essential-for-him/"));
+    await expect(page.getByText("Notes", { exact: true })).toBeVisible();
+    await expect(page.getByText(/bergamot cassia/i)).toBeVisible();
+    await expect(page.getByText(/sandalwood/i)).toBeVisible();
+  });
+
   test("omits fabricated commerce placeholders", async ({ page }) => {
     await page.goto(url("/products/crystal-for-her/"));
     const body = await page.locator("body").innerText();

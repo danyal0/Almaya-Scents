@@ -17,7 +17,7 @@ export function FullBleedImage() {
           alt={fullBleed.image.alt}
           width={fullBleed.image.width}
           height={fullBleed.image.height}
-          className="h-full max-h-[85vh] min-h-[55vh] w-full object-cover"
+          className="h-full max-h-[85vh] min-h-[55vh] w-full object-cover object-center"
         />
       </div>
       <Reveal className="container-editorial">

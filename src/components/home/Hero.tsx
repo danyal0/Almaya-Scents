@@ -4,8 +4,8 @@ import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 
 /**
  * Full-viewport cinematic hero. The section is pulled up beneath the
- * transparent header; a soft ivory gradient at the base keeps the
- * editorial copy legible over any imagery.
+ * transparent header; soft ivory scrims keep editorial copy legible
+ * over any imagery without fighting baked-in photo text.
  *
  * Entrance motion is CSS-only (`rise-in`) so the headline — the page's
  * LCP element — paints without waiting for hydration.
@@ -25,9 +25,12 @@ export function Hero() {
           width={hero.image.width}
           height={hero.image.height}
           priority
-          className="hero-settle h-full w-full object-cover object-[70%_center] md:object-center"
+          className="hero-settle h-full w-full object-cover object-[68%_center] md:object-center"
         />
-        <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-ivory via-ivory/55 to-transparent" />
+        {/* Soft top veil keeps the transparent header clear of busy imagery */}
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-ivory/70 via-ivory/25 to-transparent md:h-48" />
+        {/* Stronger base gradient for headline / CTA legibility */}
+        <div className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-ivory via-ivory/75 to-transparent" />
       </div>
 
       <div className="container-editorial relative pb-16 pt-[calc(var(--header-height)+4rem)] md:pb-24">

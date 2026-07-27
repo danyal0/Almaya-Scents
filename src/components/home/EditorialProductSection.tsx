@@ -33,6 +33,7 @@ export function EditorialProductSection({
                 alt={story.image.alt}
                 width={story.image.width}
                 height={story.image.height}
+                className="object-cover object-center"
               />
             </div>
           </Reveal>
