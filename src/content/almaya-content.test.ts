@@ -67,6 +67,7 @@ describe("content manifest integrity", () => {
     for (const product of getAllProducts().filter((p) => p.placeholder)) {
       expect(product.notes).toBeUndefined();
       expect(product.category).toBeUndefined();
+      expect(product.price).toBeUndefined();
       expect(product.officialUrl).toBeUndefined();
     }
   });

@@ -11,13 +11,13 @@ export function FullBleedImage() {
 
   return (
     <section aria-label="Brand imagery" className="relative">
-      <div className="media-frame max-h-[85vh] min-h-[55vh]">
+      <div className="media-frame aspect-[16/10] w-full md:aspect-auto md:max-h-[85vh] md:min-h-[55vh]">
         <ImageWithFallback
           src={fullBleed.image.src}
           alt={fullBleed.image.alt}
           width={fullBleed.image.width}
           height={fullBleed.image.height}
-          className="h-full max-h-[85vh] min-h-[55vh] w-full object-cover object-center"
+          className="h-full w-full object-cover object-center md:max-h-[85vh] md:min-h-[55vh]"
         />
       </div>
       <Reveal className="container-editorial">

@@ -8,11 +8,13 @@ type ProductDetailsProps = {
 };
 
 /**
- * Product information column. Optional data (category, notes, story,
- * official store link) is omitted entirely when not verified — no empty
- * labels, no "N/A".
+ * Product information column. Optional data (category, size, price, notes,
+ * story, official store link) is omitted entirely when not verified — no
+ * empty labels, no "N/A".
  */
 export function ProductDetails({ product }: ProductDetailsProps) {
+  const meta = [product.category, product.size].filter(Boolean).join(" · ");
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
@@ -20,21 +22,28 @@ export function ProductDetails({ product }: ProductDetailsProps) {
         <h1 className="font-serif text-display-m font-light text-ink">
           {product.name}
         </h1>
-        {product.category ? (
+        {meta ? (
           <p className="font-sans text-meta uppercase tracking-[0.18em] text-muted">
-            {product.category}
+            {meta}
+          </p>
+        ) : null}
+        {product.price ? (
+          <p className="font-serif text-heading font-light text-ink">
+            {product.price}
           </p>
         ) : null}
       </div>
 
-      <p className="max-w-xl text-body text-charcoal/80">{product.description}</p>
+      <p className="max-w-xl text-pretty text-body text-charcoal/80">
+        {product.description}
+      </p>
 
       <ScentNotes product={product} />
 
       {product.story ? (
         <section aria-label="Story" className="border-t border-line pt-8">
           <h2 className="eyebrow">The Story</h2>
-          <p className="mt-4 max-w-xl text-body text-charcoal/80">
+          <p className="mt-4 max-w-xl text-pretty text-body text-charcoal/80">
             {product.story}
           </p>
         </section>
@@ -46,9 +55,14 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             Shop Officially
           </Button>
         ) : (
-          <Button href={siteConfig.instagramUrl} external>
-            Inquire on Instagram
-          </Button>
+          <>
+            <Button href={siteConfig.instagramUrl} external>
+              Order on Instagram
+            </Button>
+            <Button href={siteConfig.whatsappUrl} external variant="outline">
+              WhatsApp {siteConfig.whatsappDisplay}
+            </Button>
+          </>
         )}
       </div>
     </div>

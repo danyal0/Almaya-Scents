@@ -23,6 +23,10 @@ export const siteConfig = {
   instagramUrl: "https://www.instagram.com/almayascents",
   instagramHandle: "@almayascents",
 
+  /** Public WhatsApp order line published by Almaya Scents. */
+  whatsappUrl: "https://wa.me/923070320103",
+  whatsappDisplay: "0307-0320103",
+
   /**
    * Optional public contact email. Email actions are hidden when empty —
    * do not hardcode an address here unless it is verified.

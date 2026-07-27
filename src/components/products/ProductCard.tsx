@@ -31,7 +31,7 @@ export function ProductCard({
       className={cn("group block", className)}
       aria-label={`${product.name} — view details`}
     >
-      <div className="media-frame aspect-[8/11]">
+      <div className="media-frame aspect-[4/5]">
         <ImageWithFallback
           src={image.src}
           alt={image.alt}
@@ -46,9 +46,18 @@ export function ProductCard({
           {product.name}
         </Heading>
         {product.category ? (
-          <p className="eyebrow">{product.category}</p>
+          <p className="eyebrow">
+            {[product.category, product.size].filter(Boolean).join(" · ")}
+          </p>
         ) : null}
-        <p className="max-w-md text-body-sm text-muted">{product.description}</p>
+        {product.price ? (
+          <p className="font-sans text-meta tracking-[0.08em] text-ink">
+            {product.price}
+          </p>
+        ) : null}
+        <p className="max-w-md text-pretty text-body-sm text-muted">
+          {product.description}
+        </p>
         <span className="link-underline mt-3 self-start font-sans text-meta uppercase tracking-[0.18em] text-ink">
           Discover
         </span>

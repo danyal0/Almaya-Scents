@@ -147,6 +147,12 @@ body {
     object-position: center;
     transition: transform var(--duration-slow) var(--ease-out-expo);
   }
+
+  /* Prefer contain when the full subject/label must stay visible. */
+  &.media-contain img,
+  &.media-contain svg {
+    object-fit: contain;
+  }
 }
 
 @media (hover: hover) {

@@ -12,7 +12,7 @@ export function BrandStory() {
       <div className="container-editorial">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-20">
           <Reveal className="lg:col-span-5">
-            <div className="media-frame aspect-[8/11] max-w-md lg:max-w-none">
+            <div className="media-frame aspect-[4/5] max-w-md lg:max-w-none">
               <ImageWithFallback
                 src={brandStory.image.src}
                 alt={brandStory.image.alt}

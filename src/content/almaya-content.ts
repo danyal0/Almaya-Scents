@@ -32,6 +32,10 @@ export type Product = {
   name: string;
   /** Only set when the concentration/type is published by Almaya. */
   category?: string;
+  /** Published size, e.g. "50ml". */
+  size?: string;
+  /** Published price label, e.g. "Rs 1,799". */
+  price?: string;
   description: string;
   story?: string;
   /** Only set when the notes are published by Almaya. */
@@ -134,10 +138,12 @@ const products: Product[] = [
     slug: "crystal-for-her",
     name: "Crystal For Her",
     category: "For Her",
+    size: "50ml",
+    price: "Rs 1,799",
     description:
-      "A favorite for a reason — fresh energy balanced with sophisticated floral depth, made to stay from morning to night.",
+      "Defining elegance with every spray. Crystal For Her balances fresh energy with sophisticated floral depth — luminous florals and citrus made to stay from morning to night.",
     story:
-      "Crystal For Her opens with a bright spark of yuzu and pomegranate, blooms into peony, lotus and magnolia, and settles into a smooth musk finish. Luxury here is not only the bottle — it is how she feels when she wears it.",
+      "A tribute to timeless Bright Crystal energy, Crystal For Her opens with a bright spark of yuzu and pomegranate, blooms into peony, lotus and magnolia, and settles into a smooth musk finish. Luxury here is not only the bottle — it is how she feels when she wears it.",
     notes: {
       top: ["Yuzu", "Pomegranate"],
       heart: ["Peony", "Lotus", "Magnolia"],
@@ -145,13 +151,13 @@ const products: Product[] = [
     },
     images: [
       {
-        src: "/images/products/crystal-for-her-portrait.jpg",
+        src: "/images/products/crystal-for-her-1.jpg",
         alt: "Rows of Crystal For Her bottles in soft pink light on warm wood",
         width: 1600,
         height: 2200,
       },
       {
-        src: "/images/products/crystal-for-her-detail.jpg",
+        src: "/images/products/crystal-for-her-2.jpg",
         alt: "Hand holding Crystal For Her beside rose-gold vanity details",
         width: 1600,
         height: 1600,
@@ -163,11 +169,13 @@ const products: Product[] = [
   {
     slug: "essential-for-him",
     name: "Essential For Him",
-    category: "For Him · 50ml",
+    category: "For Him",
+    size: "50ml",
+    price: "Rs 1,899",
     description:
-      "A breath of fresh air for everyday elegance — bergamot and tomato leaf lifted by rose pepper, grounded in sandalwood and patchouli.",
+      "The ultimate breath of fresh air — crisp citrus lifted by a smooth woody finish. Essential For Him is light, energetic and made to last through the day.",
     story:
-      "Essential For Him is made for the modern man who wants presence without effort. Whether the day calls for a meeting or an easy evening out, it is a signature that feels fresh, clean and considered.",
+      "Inspired by the iconic freshness of Essential, this is reimagined for the modern man who values everyday elegance. Whether it is a high-stakes meeting or a casual evening out, stay sharp with bergamot and tomato leaf, rose pepper at the heart, and sandalwood with patchouli beneath.",
     notes: {
       top: ["Bergamot Cassia", "Tomato Leaf"],
       heart: ["Rose Pepper"],
@@ -175,13 +183,13 @@ const products: Product[] = [
     },
     images: [
       {
-        src: "/images/products/essential-for-him-portrait.jpg",
+        src: "/images/products/essential-for-him-1.jpg",
         alt: "Essential For Him bottle on linen with fresh leaves and bright daylight",
         width: 1600,
         height: 2200,
       },
       {
-        src: "/images/products/essential-for-him-detail.jpg",
+        src: "/images/products/essential-for-him-2.jpg",
         alt: "Hands holding Essential For Him against a warm leather and wood setting",
         width: 1600,
         height: 1600,
@@ -201,7 +209,7 @@ export const almayaContent: BrandContent = {
   tagline: "Fragrance, remembered.",
   description:
     "Almaya Scents is a fragrance house devoted to refined, memorable perfumery — compositions made with intention, presented without excess.",
-  announcement: "Discover Crystal For Her and Essential For Him.",
+  announcement: "Crystal For Her · Essential For Him — free delivery nationwide.",
 
   hero: {
     image: {
@@ -213,7 +221,7 @@ export const almayaContent: BrandContent = {
     eyebrow: "Almaya Scents",
     headline: "Fragrance, remembered.",
     subline:
-      "Two signatures from the house — Crystal For Her and Essential For Him — worn close, kept quietly, remembered longer.",
+      "Pick your signature scent — Crystal For Her and Essential For Him. Premium oils, long-lasting wear, free delivery across Pakistan.",
     primaryCta: { label: "Discover the Collection", href: "/products/" },
     secondaryCta: { label: "Explore Our Story", href: "/about/" },
   },
@@ -229,10 +237,10 @@ export const almayaContent: BrandContent = {
     {
       eyebrow: "For Her",
       title: "Crystal For Her",
-      body: "Fresh energy meets floral depth. Yuzu and pomegranate open the composition; peony, lotus and magnolia bloom at the heart; musk closes the day with a smooth, lasting finish.",
+      body: "Luminous florals and citrus for a touch of timeless glamour. Yuzu and pomegranate open the composition; peony, lotus and magnolia bloom at the heart; musk closes the day with a smooth, lasting finish.",
       cta: { label: "Discover Crystal For Her", href: "/products/crystal-for-her/" },
       image: {
-        src: "/images/editorial/editorial-01.jpg",
+        src: "/images/editorial/editorial-01-v2.jpg",
         alt: "Crystal For Her held in soft champagne satin light",
         width: 2400,
         height: 1350,
@@ -242,10 +250,10 @@ export const almayaContent: BrandContent = {
     {
       eyebrow: "For Him",
       title: "Essential For Him",
-      body: "Everyday elegance in a crisp register — bergamot and tomato leaf opening into rose pepper, with sandalwood and patchouli beneath. A signature for mornings that turn into nights.",
+      body: "Fresh, airy and effortlessly cool for the daily hustle — bergamot and tomato leaf opening into rose pepper, with sandalwood and patchouli beneath. Your perfect everyday companion in a premium 50ml bottle.",
       cta: { label: "Discover Essential For Him", href: "/products/essential-for-him/" },
       image: {
-        src: "/images/editorial/editorial-02.jpg",
+        src: "/images/editorial/editorial-02-v2.jpg",
         alt: "Essential For Him held against deep embroidered black formalwear",
         width: 2400,
         height: 1350,
@@ -256,7 +264,7 @@ export const almayaContent: BrandContent = {
 
   fullBleed: {
     image: {
-      src: "/images/editorial/editorial-moment.jpg",
+      src: "/images/editorial/editorial-moment-v2.jpg",
       alt: "Rows of Almaya Scents Crystal For Her bottles on warm wood",
       width: 2400,
       height: 1350,
@@ -269,35 +277,35 @@ export const almayaContent: BrandContent = {
     title: "The Almaya Frame",
     images: [
       {
-        src: "/images/editorial/gallery-01.jpg",
+        src: "/images/editorial/gallery-01-v2.jpg",
         alt: "Crystal For Her in a rose-gold vanity still life",
         width: 1600,
         height: 2200,
         ratio: "portrait",
       },
       {
-        src: "/images/editorial/gallery-02.jpg",
+        src: "/images/editorial/gallery-02-v2.jpg",
         alt: "Crystal For Her bottle resting in clear rippled water",
         width: 1600,
         height: 1600,
         ratio: "square",
       },
       {
-        src: "/images/editorial/gallery-03.jpg",
+        src: "/images/editorial/gallery-03-v2.jpg",
         alt: "Rows of Essential For Him bottles in soft focus",
         width: 2400,
         height: 1350,
         ratio: "landscape",
       },
       {
-        src: "/images/editorial/gallery-04.jpg",
+        src: "/images/editorial/gallery-04-v2.jpg",
         alt: "Essential For Him held against a cream cable-knit sweater",
         width: 1600,
         height: 1600,
         ratio: "square",
       },
       {
-        src: "/images/editorial/gallery-05.jpg",
+        src: "/images/editorial/gallery-05-v2.jpg",
         alt: "Crystal For Her held in a dark car interior with warm amber light",
         width: 1600,
         height: 2200,
@@ -314,7 +322,7 @@ export const almayaContent: BrandContent = {
       "The house works slowly and edits hard. Each composition is refined until nothing unnecessary remains, then presented plainly — without noise, without excess, without apology.",
     ],
     image: {
-      src: "/images/brand/brand-01.jpg",
+      src: "/images/brand/brand-01-v2.jpg",
       alt: "Close portrait of Crystal For Her bottles in soft pink light",
       width: 1600,
       height: 2200,
@@ -342,8 +350,8 @@ export const almayaContent: BrandContent = {
       "Almaya Scents is a fragrance house devoted to a single idea: that what we wear closest should be made with the most care.",
     sections: [
       {
-        heading: "The conviction",
-        body: "Fragrance is the closest thing we wear to memory. A composition is never only a composition — it is a room, a season, a person, returned for a moment. Almaya makes scents for those moments: precise enough to be recognized, quiet enough to be kept.",
+        heading: "Why choose Almaya",
+        body: "Highly concentrated oils for a rich, lasting projection. Carefully sourced ingredients. Wear that stays with you eight to twelve hours. A seven-day money-back guarantee, premium packaging, safety-tested formulas and cruelty-free craft — luxury in every drop.",
       },
       {
         heading: "The practice",
@@ -351,11 +359,11 @@ export const almayaContent: BrandContent = {
       },
       {
         heading: "The invitation",
-        body: "Almaya shares its world through its collection and its Instagram. Follow along as new compositions, stories and imagery are released — and reach out directly for inquiries.",
+        body: "Order through Instagram or WhatsApp for free nationwide delivery in Pakistan. Follow Almaya Scents for new releases, and reach out directly for inquiries.",
       },
     ],
     image: {
-      src: "/images/brand/brand-02.jpg",
+      src: "/images/brand/brand-02-v2.jpg",
       alt: "Crystal For Her with golden pour and soft pink florals",
       width: 2400,
       height: 1350,
@@ -373,7 +381,7 @@ export const almayaContent: BrandContent = {
   contactPage: {
     title: "Contact",
     intro:
-      "For inquiries, orders and everything else, the fastest way to reach Almaya Scents is through Instagram.",
+      "For orders and inquiries, message Almaya Scents on Instagram or WhatsApp. Free delivery is available nationwide across Pakistan.",
   },
 
   products,

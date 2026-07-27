@@ -41,11 +41,14 @@ describe("ProductDetails", () => {
     expect(screen.getByText("A verified story.")).toBeInTheDocument();
   });
 
-  it("falls back to an Instagram inquiry when no official store exists", () => {
+  it("falls back to Instagram and WhatsApp when no official store exists", () => {
     render(<ProductDetails product={minimalProduct} />);
-    const cta = screen.getByRole("link", { name: /inquire on instagram/i });
-    expect(cta).toHaveAttribute("target", "_blank");
-    expect(cta).toHaveAttribute("rel", "noopener noreferrer");
+    const instagram = screen.getByRole("link", { name: /order on instagram/i });
+    expect(instagram).toHaveAttribute("target", "_blank");
+    expect(instagram).toHaveAttribute("rel", "noopener noreferrer");
+    expect(
+      screen.getByRole("link", { name: /whatsapp/i }),
+    ).toHaveAttribute("href", expect.stringContaining("wa.me"));
   });
 
   it("links to the official store when verified", () => {
@@ -58,7 +61,7 @@ describe("ProductDetails", () => {
     expect(cta).toHaveAttribute("href", "https://example.com/shop");
     expect(cta).toHaveAttribute("rel", "noopener noreferrer");
     expect(
-      screen.queryByRole("link", { name: /inquire on instagram/i }),
+      screen.queryByRole("link", { name: /order on instagram/i }),
     ).not.toBeInTheDocument();
   });
 });

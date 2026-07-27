@@ -16,6 +16,9 @@ type ProductGalleryProps = {
  *
  * Desktop: large main image with thumbnail selection.
  * Mobile: native swipe (scroll-snap) with visible pagination dots.
+ *
+ * Frames use a soft 4:5 ratio with object-contain so bottle labels and
+ * full product photography are never cropped on mobile.
  */
 export function ProductGallery({ images, productName }: ProductGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -51,7 +54,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
         >
           {images.map((image) => (
             <div key={image.src} className="w-full flex-none snap-center">
-              <div className="media-frame aspect-[8/11]">
+              <div className="media-frame aspect-[4/5]">
                 <ImageWithFallback
                   src={image.src}
                   alt={image.alt}
@@ -118,7 +121,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           </div>
         ) : null}
 
-        <div className="media-frame aspect-[8/11] flex-1">
+        <div className="media-frame aspect-[4/5] flex-1">
           <ImageWithFallback
             key={active.src}
             src={active.src}

@@ -77,14 +77,18 @@ test.describe("product pages", () => {
     const mainImage = page
       .locator('div[aria-label="Crystal For Her gallery"] .hidden.md\\:flex img')
       .last();
-    await expect(mainImage).toHaveAttribute("src", /crystal-for-her-detail/);
+    await expect(mainImage).toHaveAttribute("src", /crystal-for-her-2/);
   });
 
-  test("inquiry CTA opens Instagram securely", async ({ page }) => {
+  test("order CTAs open Instagram and WhatsApp securely", async ({ page }) => {
     await page.goto(url("/products/crystal-for-her/"));
-    const cta = page.getByRole("link", { name: /inquire on instagram/i });
-    await expect(cta).toHaveAttribute("target", "_blank");
-    await expect(cta).toHaveAttribute("rel", "noopener noreferrer");
-    await expect(cta).toHaveAttribute("href", /instagram\.com\/almayascents/);
+    const instagram = page.getByRole("link", { name: /order on instagram/i });
+    await expect(instagram).toHaveAttribute("target", "_blank");
+    await expect(instagram).toHaveAttribute("rel", "noopener noreferrer");
+    await expect(instagram).toHaveAttribute("href", /instagram\.com\/almayascents/);
+
+    const whatsapp = page.getByRole("link", { name: /whatsapp/i });
+    await expect(whatsapp).toHaveAttribute("target", "_blank");
+    await expect(whatsapp).toHaveAttribute("href", /wa\.me\/923070320103/);
   });
 });

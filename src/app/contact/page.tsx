@@ -45,13 +45,47 @@ export default function ContactPage() {
                 <h2 className="font-serif text-heading font-light text-ink">
                   Instagram
                 </h2>
-                <p className="text-body-sm text-muted">
+                <p className="text-pretty text-body-sm text-muted">
                   Message {siteConfig.instagramHandle} directly for inquiries,
                   orders and everything in between.
                 </p>
               </div>
               <Button href={siteConfig.instagramUrl} external className="mt-auto">
                 Contact on Instagram
+              </Button>
+            </section>
+          </Reveal>
+
+          <Reveal delay={0.08}>
+            <section
+              aria-label="WhatsApp"
+              className="flex h-full flex-col items-start gap-6 border-t border-line pt-8"
+            >
+              <svg
+                aria-hidden="true"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.25"
+                className="text-ink"
+              >
+                <path d="M4.5 19.5l1.2-4.2A7.5 7.5 0 1112 19.5a7.4 7.4 0 01-3.3-.8L4.5 19.5z" />
+                <path d="M9.2 10.8c.3-.5.5-.5.7-.5h.5c.2 0 .4 0 .5.4l.7 1.7c.1.2 0 .4-.2.6l-.4.4c-.1.1-.1.3 0 .5.4.7 1.1 1.4 1.8 1.8.2.1.4.1.5 0l.5-.5c.2-.2.4-.2.6-.1l1.6.7c.3.1.4.3.4.5v.5c0 .2 0 .4-.5.7-.4.3-1 .5-1.7.5A6.2 6.2 0 019 12.4c0-.7.1-1.3.2-1.6z" />
+              </svg>
+              <div className="flex flex-col gap-2">
+                <h2 className="font-serif text-heading font-light text-ink">
+                  WhatsApp
+                </h2>
+                <p className="text-pretty text-body-sm text-muted">
+                  Prefer a quick message? Reach the house at{" "}
+                  <span className="text-ink">{siteConfig.whatsappDisplay}</span>{" "}
+                  for orders and free nationwide delivery.
+                </p>
+              </div>
+              <Button href={siteConfig.whatsappUrl} external variant="outline" className="mt-auto">
+                Message on WhatsApp
               </Button>
             </section>
           </Reveal>
@@ -79,7 +113,7 @@ export default function ContactPage() {
                   <h2 className="font-serif text-heading font-light text-ink">
                     Email
                   </h2>
-                  <p className="text-body-sm text-muted">
+                  <p className="text-pretty text-body-sm text-muted">
                     Prefer to write? Reach the house at{" "}
                     <span className="text-ink">{email}</span>.
                   </p>
