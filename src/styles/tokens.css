@@ -1,0 +1,64 @@
+/*
+ * Almaya Scents — design tokens.
+ *
+ * Neutral luxury palette (fallback palette per content brief; replace the
+ * raw values below if authorized Almaya brand colors become available).
+ */
+
+:root {
+  /* ------------------------------------------------------------------ */
+  /* Color                                                               */
+  /* ------------------------------------------------------------------ */
+  --ink: #111111;
+  --charcoal: #202020;
+  --paper: #f5f2ec;
+  --ivory: #fcfaf6;
+  --warm-gray: #d8d2c8;
+  --muted: #77736c;
+  --line: rgba(17, 17, 17, 0.14);
+  --line-strong: rgba(17, 17, 17, 0.32);
+  --white: #ffffff;
+
+  /* ------------------------------------------------------------------ */
+  /* Typography scale                                                    */
+  /* ------------------------------------------------------------------ */
+  --text-display-xl: clamp(3.5rem, 8vw, 8rem);
+  --text-display-l: clamp(2.75rem, 6vw, 6rem);
+  --text-display-m: clamp(2rem, 4vw, 4rem);
+  --text-heading: clamp(1.5rem, 2.5vw, 2.5rem);
+  --text-body: 1.0625rem; /* 17px */
+  --text-body-sm: 0.9375rem; /* 15px */
+  --text-meta: 0.75rem; /* 12px */
+
+  --leading-display: 1.04;
+  --leading-heading: 1.15;
+  --leading-body: 1.65;
+
+  --tracking-meta: 0.18em;
+  --tracking-wide: 0.08em;
+  --tracking-display: -0.015em;
+
+  /* ------------------------------------------------------------------ */
+  /* Motion                                                              */
+  /* ------------------------------------------------------------------ */
+  --duration-fast: 150ms;
+  --duration-standard: 250ms;
+  --duration-slow: 450ms;
+  --duration-reveal: 750ms;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ------------------------------------------------------------------ */
+  /* Layout                                                              */
+  /* ------------------------------------------------------------------ */
+  --container-max: 90rem; /* 1440px */
+  --container-pad: clamp(1.25rem, 4vw, 3.5rem);
+  --header-height: 4.5rem;
+  --announcement-height: 2.25rem;
+
+  /* ------------------------------------------------------------------ */
+  /* Elevation — intentionally almost invisible                          */
+  /* ------------------------------------------------------------------ */
+  --shadow-soft: 0 24px 60px -30px rgba(17, 17, 17, 0.18);
+}

@@ -1,0 +1,205 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+@theme inline {
+  /* Colors */
+  --color-ink: var(--ink);
+  --color-charcoal: var(--charcoal);
+  --color-paper: var(--paper);
+  --color-ivory: var(--ivory);
+  --color-warm-gray: var(--warm-gray);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-white: var(--white);
+
+  /* Fonts (variables provided by next/font in src/app/layout.tsx) */
+  --font-serif: var(--font-display), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-text), Inter, system-ui, -apple-system, sans-serif;
+
+  /* Type scale */
+  --text-display-xl: var(--text-display-xl);
+  --text-display-xl--line-height: var(--leading-display);
+  --text-display-xl--letter-spacing: var(--tracking-display);
+  --text-display-l: var(--text-display-l);
+  --text-display-l--line-height: var(--leading-display);
+  --text-display-l--letter-spacing: var(--tracking-display);
+  --text-display-m: var(--text-display-m);
+  --text-display-m--line-height: 1.08;
+  --text-display-m--letter-spacing: var(--tracking-display);
+  --text-heading: var(--text-heading);
+  --text-heading--line-height: var(--leading-heading);
+  --text-body: var(--text-body);
+  --text-body--line-height: var(--leading-body);
+  --text-body-sm: var(--text-body-sm);
+  --text-body-sm--line-height: 1.6;
+  --text-meta: var(--text-meta);
+  --text-meta--line-height: 1.4;
+  --text-meta--letter-spacing: var(--tracking-meta);
+
+  /* Motion */
+  --ease-out-expo: var(--ease-out-expo);
+  --ease-standard: var(--ease-standard);
+
+  /* Elevation */
+  --shadow-soft: var(--shadow-soft);
+}
+
+html {
+  scroll-padding-top: calc(var(--header-height) + 1rem);
+}
+
+body {
+  background: var(--ivory);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--ivory);
+}
+
+/* ------------------------------------------------------------------ */
+/* Focus visibility                                                     */
+/* ------------------------------------------------------------------ */
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.on-dark :focus-visible,
+:focus-visible.on-dark {
+  outline-color: var(--ivory);
+}
+
+/* ------------------------------------------------------------------ */
+/* Shared editorial primitives                                          */
+/* ------------------------------------------------------------------ */
+@utility container-editorial {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+@utility section-gap {
+  padding-block: clamp(4rem, 9vw, 8.5rem);
+}
+
+/* Animated underline used by links and nav items. */
+@utility link-underline {
+  position: relative;
+  display: inline-block;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.2em;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform var(--duration-standard) var(--ease-out-expo);
+  }
+
+  &:hover::after,
+  &:focus-visible::after,
+  &[aria-current="page"]::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+
+/* Reveal the underline when a wrapping card ("group") is hovered/focused. */
+.group:hover .link-underline::after,
+.group:focus-within .link-underline::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* Media frame with the subtle luxury hover-zoom. */
+@utility media-frame {
+  position: relative;
+  overflow: hidden;
+  background: var(--paper);
+
+  & img,
+  & svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--duration-slow) var(--ease-out-expo);
+  }
+}
+
+@media (hover: hover) {
+  .group:hover .media-frame img,
+  a:hover > .media-frame img,
+  button:hover > .media-frame img {
+    transform: scale(1.03);
+  }
+}
+
+/* Hero image settle-in on first paint. */
+@keyframes hero-settle {
+  from {
+    transform: scale(1.045);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.hero-settle {
+  animation: hero-settle 2.2s var(--ease-out-expo) both;
+}
+
+/* Skeleton shimmer — used while gallery / lightbox media resolves. */
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.skeleton {
+  background: var(--warm-gray);
+  animation: skeleton-pulse 1.8s var(--ease-standard) infinite;
+}
+
+/* ------------------------------------------------------------------ */
+/* Reduced motion                                                       */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .hero-settle {
+    animation: none;
+  }
+}

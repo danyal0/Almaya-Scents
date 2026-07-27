@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600" role="img" aria-label="Placeholder artwork: close detail of a bottle stopper">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FCFAF6"/>
+      <stop offset="1" stop-color="#EDE8DF"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.05"/></feComponentTransfer>
+      <feComposite operator="over" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="1600" fill="url(#bg)"/>
+  <g fill="none" stroke="#111111" stroke-opacity="0.6" stroke-width="5">
+    <rect x="480" y="980" width="640" height="620"/>
+    <line x1="480" y1="1090" x2="1120" y2="1090" stroke-opacity="0.28"/>
+    <rect x="690" y="880" width="220" height="100"/>
+    <rect x="640" y="480" width="320" height="400"/>
+    <line x1="640" y1="680" x2="960" y2="680" stroke-opacity="0.3"/>
+    <line x1="800" y1="480" x2="800" y2="880" stroke-opacity="0.18"/>
+  </g>
+  <rect width="1600" height="1600" fill="#F5F2EC" opacity="0" filter="url(#grain)"/>
+</svg>

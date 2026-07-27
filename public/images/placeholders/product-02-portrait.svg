@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2200" viewBox="0 0 1600 2200" role="img" aria-label="Placeholder artwork: round-shouldered fragrance flacon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FCFAF6"/>
+      <stop offset="1" stop-color="#F0EBE2"/>
+    </linearGradient>
+    <radialGradient id="light" cx="0.42" cy="0.4" r="0.62">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.05"/></feComponentTransfer>
+      <feComposite operator="over" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="2200" fill="url(#bg)"/>
+  <rect width="1600" height="2200" fill="url(#light)"/>
+  <line x1="0" y1="1680" x2="1600" y2="1680" stroke="#111111" stroke-opacity="0.14" stroke-width="3"/>
+  <ellipse cx="800" cy="1682" rx="300" ry="24" fill="#111111" opacity="0.07"/>
+  <g fill="none" stroke="#111111" stroke-opacity="0.62" stroke-width="4.5">
+    <path d="M600 1678 L600 1080 Q600 900 800 900 Q1000 900 1000 1080 L1000 1678 Z"/>
+    <rect x="748" y="820" width="104" height="80"/>
+    <circle cx="800" cy="740" r="80"/>
+    <path d="M660 1120 Q660 990 780 970" stroke-opacity="0.22"/>
+  </g>
+  <rect width="1600" height="2200" fill="#F5F2EC" opacity="0" filter="url(#grain)"/>
+</svg>
