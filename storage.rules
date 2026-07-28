@@ -1,13 +1,20 @@
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /cms-uploads/{allPaths=**} {
-      allow read: if true;
-      // Authenticated admin only. Keep rules simple so mobile photo uploads
-      // are not rejected by contentType mismatches (common on iPhone).
-      allow write: if request.auth != null
-        && request.auth.token.email == 'almayascents@mrcasm.com'
-        && request.resource.size < 8 * 1024 * 1024;
-    }
-  }
-}
+# Optional — Firebase Storage is NOT required for this project.
+#
+# Image uploads are handled for free by compressing photos in the browser
+# and saving them with your Firestore content (Spark/free plan).
+#
+# You can still paste any public image URL instead of uploading a file.
+#
+# If you later upgrade to Blaze and want Cloud Storage, you can use rules like:
+#
+# rules_version = '2';
+# service firebase.storage {
+#   match /b/{bucket}/o {
+#     match /cms-uploads/{allPaths=**} {
+#       allow read: if true;
+#       allow write: if request.auth != null
+#         && request.auth.token.email == 'almayascents@mrcasm.com'
+#         && request.resource.size < 8 * 1024 * 1024;
+#     }
+#   }
+# }
