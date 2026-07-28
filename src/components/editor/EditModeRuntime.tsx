@@ -14,7 +14,11 @@ import {
 } from "@/lib/edit-overrides";
 import { siteConfig } from "@/content/site-config";
 import { firebaseAuth } from "@/lib/firebase";
-import { loadFirebaseOverrides, saveFirebaseOverrides } from "@/lib/firebase-overrides";
+import {
+  formatFirestoreError,
+  loadFirebaseOverrides,
+  saveFirebaseOverrides,
+} from "@/lib/firebase-overrides";
 
 const TEXT_SELECTOR =
   "h1,h2,h3,h4,h5,h6,p,span,small,strong,em,blockquote,figcaption,a,button,label,li";
@@ -218,11 +222,7 @@ export function EditModeRuntime() {
       setPublished(draft);
       setStatus("Saved. All visitors will see these changes.");
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unable to save changes.";
-      setStatus(
-        `Save failed: ${message}. Check Firestore is enabled and security rules allow your admin email to write.`,
-      );
+      setStatus(`Save failed: ${formatFirestoreError(error)}`);
     } finally {
       setSaving(false);
     }
@@ -250,9 +250,8 @@ export function EditModeRuntime() {
       setStatus("Reset complete. Reloading…");
       window.location.reload();
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unable to reset content.";
-      setStatus(`Reset failed: ${message}`);
+      setStatus(`Reset failed: ${formatFirestoreError(error)}`);
+    } finally {
       setSaving(false);
     }
   };
