@@ -1,17 +1,26 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+  signOut,
+  type User,
+} from "firebase/auth";
 
 import {
-  AUTH_STORAGE_KEY,
   GITHUB_SETTINGS_STORAGE_KEY,
   OVERRIDES_FILE_PATH,
-  PASSWORD_STORAGE_KEY,
   resolvePublicPath,
   normalizeOverrides,
   readStoredOverrides,
   writeStoredOverrides,
 } from "@/lib/edit-overrides";
+import { siteConfig } from "@/content/site-config";
+import { firebaseAuth } from "@/lib/firebase";
+import { loadFirebaseOverrides, saveFirebaseOverrides } from "@/lib/firebase-overrides";
 
 type GithubSettings = {
   owner: string;
@@ -57,23 +66,26 @@ function toBase64(input: string): string {
 }
 
 export function AdminPanel() {
-  const initialHasPassword =
-    typeof window !== "undefined" &&
-    Boolean(window.localStorage.getItem(PASSWORD_STORAGE_KEY));
-  const initialAuthed =
-    typeof window !== "undefined" &&
-    window.localStorage.getItem(AUTH_STORAGE_KEY) === "1";
-
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
   const [status, setStatus] = useState("");
   const [jsonInput, setJsonInput] = useState(
     JSON.stringify(readStoredOverrides(), null, 2),
   );
   const [github, setGithub] = useState<GithubSettings>(readGithubSettings);
-  const [hasPassword, setHasPassword] = useState(initialHasPassword);
-  const [authed, setAuthed] = useState(initialAuthed);
+  const [authed, setAuthed] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const isAllowedAdmin =
+    currentUser?.email?.toLowerCase() === siteConfig.adminEmail.toLowerCase() &&
+    currentUser.emailVerified;
+
+  useEffect(() => {
+    return onAuthStateChanged(firebaseAuth, (user) => {
+      setCurrentUser(user);
+      setAuthed(Boolean(user));
+    });
+  }, []);
 
   const parsedJson = useMemo(() => {
     try {
@@ -88,68 +100,48 @@ export function AdminPanel() {
       <div className="container-editorial max-w-3xl">
         <h1 className="font-serif text-display-m font-light text-ink">Back Office</h1>
         <p className="mt-4 text-body text-charcoal/80">
-          This editor works on GitHub Pages only. Login is client-side, so treat it as
-          convenience access, not strong security.
+          Firebase powers login and shared content, while the site itself stays on
+          GitHub Pages.
         </p>
 
         <section className="mt-10 border-t border-line pt-8">
-          <h2 className="font-serif text-heading font-light text-ink">Login setup</h2>
-          {!hasPassword ? (
+          <h2 className="font-serif text-heading font-light text-ink">Admin login</h2>
+          {!authed ? (
             <div className="mt-6 flex flex-col gap-4">
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder={siteConfig.adminEmail}
+                className="min-h-11 border-b border-line bg-transparent px-1"
+              />
               <input
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                placeholder="Set admin password"
+                placeholder="Password"
                 className="min-h-11 border-b border-line bg-transparent px-1"
               />
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
-                placeholder="Confirm password"
-                className="min-h-11 border-b border-line bg-transparent px-1"
-              />
-              <button
-                type="button"
-                className="inline-flex min-h-11 items-center justify-center bg-ink px-8 py-3 font-sans text-meta uppercase tracking-[0.18em] text-ivory"
-                onClick={() => {
-                  if (!password || password !== confirmPassword) {
-                    setStatus("Password and confirmation must match.");
-                    return;
-                  }
-                  window.localStorage.setItem(PASSWORD_STORAGE_KEY, password);
-                  window.localStorage.setItem(AUTH_STORAGE_KEY, "1");
-                  setHasPassword(true);
-                  setAuthed(true);
-                  setStatus("Password set. You are now logged in.");
-                }}
-              >
-                Save password
-              </button>
-            </div>
-          ) : (
-            <div className="mt-6 flex flex-col gap-4">
-              <input
-                type="password"
-                value={loginPassword}
-                onChange={(event) => setLoginPassword(event.target.value)}
-                placeholder="Enter admin password"
+                placeholder="Confirm password (for sign up only)"
                 className="min-h-11 border-b border-line bg-transparent px-1"
               />
               <div className="flex flex-wrap gap-3">
                 <button
                   type="button"
                   className="inline-flex min-h-11 items-center justify-center bg-ink px-8 py-3 font-sans text-meta uppercase tracking-[0.18em] text-ivory"
-                  onClick={() => {
-                    const stored = window.localStorage.getItem(PASSWORD_STORAGE_KEY);
-                    if (!stored || loginPassword !== stored) {
-                      setStatus("Invalid password.");
-                      return;
+                  onClick={async () => {
+                    try {
+                      await signInWithEmailAndPassword(firebaseAuth, email, password);
+                      setStatus("Logged in.");
+                    } catch (error) {
+                      const message =
+                        error instanceof Error ? error.message : "Unable to log in.";
+                      setStatus(message);
                     }
-                    window.localStorage.setItem(AUTH_STORAGE_KEY, "1");
-                    setAuthed(true);
-                    setStatus("Logged in.");
                   }}
                 >
                   Login
@@ -157,9 +149,53 @@ export function AdminPanel() {
                 <button
                   type="button"
                   className="inline-flex min-h-11 items-center justify-center border border-line px-8 py-3 font-sans text-meta uppercase tracking-[0.18em] text-ink"
-                  onClick={() => {
-                    window.localStorage.removeItem(AUTH_STORAGE_KEY);
-                    setAuthed(false);
+                  onClick={async () => {
+                    if (email.trim().toLowerCase() !== siteConfig.adminEmail.toLowerCase()) {
+                      setStatus(`Only ${siteConfig.adminEmail} can create the admin account.`);
+                      return;
+                    }
+                    if (!email || !password || password !== confirmPassword) {
+                      setStatus("Passwords must match for the initial admin sign-up.");
+                      return;
+                    }
+                    try {
+                      const credentials = await createUserWithEmailAndPassword(
+                        firebaseAuth,
+                        email,
+                        password,
+                      );
+                      await sendEmailVerification(credentials.user);
+                      setStatus(
+                        `Admin account created. Verify ${siteConfig.adminEmail} from your inbox before admin access is enabled.`,
+                      );
+                    } catch (error) {
+                      const message =
+                        error instanceof Error ? error.message : "Unable to create account.";
+                      setStatus(message);
+                    }
+                  }}
+                >
+                  Create account
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-6 flex flex-col gap-4">
+              <p className="text-body-sm text-muted">
+                Logged in as <span className="text-ink">{currentUser?.email}</span>
+              </p>
+              {!isAllowedAdmin ? (
+                <p className="text-body-sm text-muted">
+                  Admin access is restricted to <span className="text-ink">{siteConfig.adminEmail}</span>
+                  {" "}with a verified email address.
+                </p>
+              ) : null}
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  className="inline-flex min-h-11 items-center justify-center border border-line px-8 py-3 font-sans text-meta uppercase tracking-[0.18em] text-ink"
+                  onClick={async () => {
+                    await signOut(firebaseAuth);
                     setStatus("Logged out.");
                   }}
                 >
@@ -170,7 +206,7 @@ export function AdminPanel() {
           )}
         </section>
 
-        {authed ? (
+        {authed && isAllowedAdmin ? (
           <>
             <section className="mt-10 border-t border-line pt-8">
               <h2 className="font-serif text-heading font-light text-ink">Edit mode</h2>
@@ -221,7 +257,65 @@ export function AdminPanel() {
                 >
                   Copy JSON
                 </button>
+                <button
+                  type="button"
+                  className="inline-flex min-h-11 items-center justify-center border border-line px-8 py-3 font-sans text-meta uppercase tracking-[0.18em] text-ink"
+                  onClick={async () => {
+                    try {
+                      const remote = await loadFirebaseOverrides();
+                      if (!remote) {
+                        setStatus("No Firebase overrides saved yet.");
+                        return;
+                      }
+                      const pretty = JSON.stringify(remote, null, 2);
+                      setJsonInput(pretty);
+                      writeStoredOverrides(remote);
+                      setStatus("Loaded current Firebase content.");
+                    } catch (error) {
+                      const message =
+                        error instanceof Error ? error.message : "Unable to load Firebase data.";
+                      setStatus(message);
+                    }
+                  }}
+                >
+                  Load from Firebase
+                </button>
               </div>
+            </section>
+
+            <section className="mt-10 border-t border-line pt-8">
+              <h2 className="font-serif text-heading font-light text-ink">
+                Publish live content to Firebase
+              </h2>
+              <p className="mt-3 text-body-sm text-muted">
+                Saving here updates the shared content document. All viewers will see the
+                changes as soon as the site reloads.
+              </p>
+              <button
+                type="button"
+                className="mt-5 inline-flex min-h-11 items-center justify-center bg-ink px-8 py-3 font-sans text-meta uppercase tracking-[0.18em] text-ivory"
+                onClick={async () => {
+                  if (!parsedJson) {
+                    setStatus("Invalid JSON. Cannot publish.");
+                    return;
+                  }
+                  if (!currentUser?.email) {
+                    setStatus("You must be logged in to publish.");
+                    return;
+                  }
+                  try {
+                    await saveFirebaseOverrides(parsedJson, currentUser.email);
+                    writeStoredOverrides(parsedJson);
+                    setStatus("Published to Firebase. This is now live for all viewers.");
+                  } catch (error) {
+                    const message =
+                      error instanceof Error ? error.message : "Unable to publish to Firebase.";
+                    setStatus(message);
+                  }
+                }}
+              >
+                Publish to Firebase
+              </button>
             </section>
 
             <section className="mt-10 border-t border-line pt-8">

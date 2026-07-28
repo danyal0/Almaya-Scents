@@ -10,8 +10,6 @@ export type ContentOverrides = {
 
 export const OVERRIDES_FILE_PATH = "/content-overrides.json";
 export const OVERRIDES_STORAGE_KEY = "cms:overrides:v1";
-export const AUTH_STORAGE_KEY = "cms:auth:v1";
-export const PASSWORD_STORAGE_KEY = "cms:password:v1";
 export const GITHUB_SETTINGS_STORAGE_KEY = "cms:github:v1";
 
 const PUBLIC_BASE_PATH = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/+$/, "");

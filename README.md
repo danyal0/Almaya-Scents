@@ -75,14 +75,19 @@ Everything editable lives in three files:
 
 This project includes a static **Back Office** at `/admin/`:
 
-- client-side login (stored in browser localStorage)
+- Firebase email/password login
 - inline visual edit mode (`?edit=1`) for text and images
-- local override storage in browser
+- shared content publishing through Firebase Firestore
+- local override storage in browser for draft edits
 - optional publish to GitHub using a personal access token
 
 Runtime overrides are read from:
 
 - `public/content-overrides.json`
+
+When Firebase is configured and Firestore contains a shared override document,
+the live site reads that remote content first. This means content changes can
+become visible for all viewers without waiting for a GitHub Pages redeploy.
 
 When you publish from `/admin/`, the editor updates that file in your repository.
 After GitHub Pages rebuilds, the new content is visible for all viewers.

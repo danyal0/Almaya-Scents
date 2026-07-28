@@ -14,6 +14,7 @@
     "build:e2e": "NEXT_PUBLIC_BASE_PATH=/almaya-e2e next build"
   },
   "dependencies": {
+    "firebase": "^12.16.0",
     "framer-motion": "^12.42.2",
     "next": "16.2.12",
     "react": "19.2.4",

@@ -40,9 +40,7 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
       if (event.key === "Escape") {
         event.preventDefault();
         onClose();
-        return;
       }
-      trapFocus(event, panel);
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -79,6 +77,7 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
         role="dialog"
         aria-modal="true"
         aria-label="Site navigation"
+        onKeyDown={(event) => trapFocus(event.nativeEvent, panelRef.current!)}
         className={`absolute inset-y-0 left-0 flex w-full max-w-md flex-col bg-ivory transition-transform duration-[450ms] ease-[var(--ease-out-expo)] ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}

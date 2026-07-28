@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
 
 import {
-  AUTH_STORAGE_KEY,
   clearStoredOverrides,
   EMPTY_OVERRIDES,
   OVERRIDES_FILE_PATH,
@@ -13,6 +13,9 @@ import {
   readStoredOverrides,
   writeStoredOverrides,
 } from "@/lib/edit-overrides";
+import { siteConfig } from "@/content/site-config";
+import { firebaseAuth } from "@/lib/firebase";
+import { loadFirebaseOverrides } from "@/lib/firebase-overrides";
 
 const TEXT_SELECTOR =
   "h1,h2,h3,h4,h5,h6,p,span,small,strong,em,blockquote,figcaption,a,button,label,li";
@@ -76,35 +79,45 @@ function getEditModeEnabled(): boolean {
 
 export function EditModeRuntime() {
   const initialOverrides = readStoredOverrides();
-  const initialAuthed =
-    typeof window !== "undefined" &&
-    window.localStorage.getItem(AUTH_STORAGE_KEY) === "1";
   const initialEditEnabled =
     typeof window !== "undefined" && getEditModeEnabled();
 
   const [overrides, setOverrides] = useState<ContentOverrides>(initialOverrides);
   const [editEnabled] = useState(initialEditEnabled);
-  const [authed] = useState(initialAuthed);
+  const [authed, setAuthed] = useState(false);
   const [savedNotice, setSavedNotice] = useState("");
 
   const canEdit = editEnabled && authed;
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
+      const allowed =
+        user?.email?.toLowerCase() === siteConfig.adminEmail.toLowerCase() &&
+        user.emailVerified;
+      setAuthed(Boolean(allowed));
+    });
+
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
     const local = initialOverrides;
     applyOverrides(initialOverrides);
 
-    const requestUrl = `${resolvePublicPath(OVERRIDES_FILE_PATH)}?t=${Date.now()}`;
-    void fetch(requestUrl)
-      .then(async (response) => {
+    void loadFirebaseOverrides()
+      .catch(async () => {
+        const requestUrl = `${resolvePublicPath(OVERRIDES_FILE_PATH)}?t=${Date.now()}`;
+        const response = await fetch(requestUrl);
         if (!response.ok) return EMPTY_OVERRIDES;
         return normalizeOverrides(await response.json());
       })
       .then((remote) => {
         if (cancelled) return;
+        const resolvedRemote = remote ?? EMPTY_OVERRIDES;
         const merged: ContentOverrides = {
-          texts: { ...remote.texts, ...local.texts },
-          images: { ...remote.images, ...local.images },
+          texts: { ...resolvedRemote.texts, ...local.texts },
+          images: { ...resolvedRemote.images, ...local.images },
         };
         setOverrides(merged);
         applyOverrides(merged);
