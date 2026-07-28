@@ -12,6 +12,8 @@ export type CmsSection = {
   imageSrc: string;
   imageAlt: string;
   order: number;
+  /** Grid span: half fits in 2-column layout, full uses full row. */
+  span: "half" | "full";
 };
 
 export type CmsPage = {
@@ -154,6 +156,12 @@ function normalizeSections(input: unknown): CmsSection[] {
         section.type === "image" || section.type === "text-image" || section.type === "text"
           ? section.type
           : "text";
+      const span =
+        section.span === "half" || section.span === "full"
+          ? section.span
+          : type === "image"
+            ? "half"
+            : "full";
       return {
         id: section.id,
         pageKey: section.pageKey,
@@ -163,6 +171,7 @@ function normalizeSections(input: unknown): CmsSection[] {
         imageSrc: typeof section.imageSrc === "string" ? section.imageSrc : "",
         imageAlt: typeof section.imageAlt === "string" ? section.imageAlt : "",
         order: typeof section.order === "number" ? section.order : index,
+        span,
       } satisfies CmsSection;
     })
     .filter((section): section is CmsSection => Boolean(section))

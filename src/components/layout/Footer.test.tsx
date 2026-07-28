@@ -25,4 +25,12 @@ describe("Footer", () => {
     expect(screen.getByRole("link", { name: "Privacy" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Terms" })).toBeInTheDocument();
   });
+
+  it("links to MrCasm as the powered-by credit", () => {
+    render(<Footer />);
+    const credit = screen.getByRole("link", { name: /mrcasm/i });
+    expect(credit).toHaveAttribute("href", "https://mrcasm.com");
+    expect(credit).toHaveAttribute("target", "_blank");
+    expect(credit).toHaveAttribute("rel", "noopener noreferrer");
+  });
 });

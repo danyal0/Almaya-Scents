@@ -41,9 +41,22 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col-reverse items-start justify-between gap-6 border-t border-ivory/15 pt-8 md:flex-row md:items-center">
-          <p className="font-sans text-meta tracking-[0.08em] text-ivory/50">
-            © {year} {siteConfig.name}. All rights reserved.
-          </p>
+          <div className="flex flex-col gap-3">
+            <p className="font-sans text-meta tracking-[0.08em] text-ivory/50">
+              © {year} {siteConfig.name}. All rights reserved.
+            </p>
+            <p className="font-sans text-meta tracking-[0.08em] text-ivory/50">
+              Proudly powered by{" "}
+              <a
+                href="https://mrcasm.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link-underline text-ivory/80 transition-colors duration-[150ms] hover:text-ivory"
+              >
+                MrCasm
+              </a>
+            </p>
+          </div>
 
           <nav aria-label="Legal">
             <ul className="flex gap-8">

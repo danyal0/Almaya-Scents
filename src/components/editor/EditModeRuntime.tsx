@@ -67,14 +67,6 @@ function applyOverrides(overrides: ContentOverrides) {
       node.alt = image.alt;
     }
   }
-
-  for (const [selector, position] of Object.entries(overrides.positions)) {
-    const node = document.querySelector(selector);
-    if (!(node instanceof HTMLElement)) continue;
-    node.style.transform = `translate(${position.x}px, ${position.y}px)`;
-    node.style.position = node.style.position || "relative";
-    node.style.zIndex = node.style.zIndex || "2";
-  }
 }
 
 function isTextEditable(node: EventTarget | null): node is HTMLElement {
@@ -83,15 +75,9 @@ function isTextEditable(node: EventTarget | null): node is HTMLElement {
 
 function nearestEditableImage(target: EventTarget | null): HTMLImageElement | null {
   if (!(target instanceof HTMLElement)) return null;
+  if (target.closest("[data-cms-sections]")) return null;
   if (target instanceof HTMLImageElement) return target;
   return target.closest("img");
-}
-
-function nearestDraggable(target: EventTarget | null): HTMLElement | null {
-  if (!(target instanceof HTMLElement)) return null;
-  if (target.closest("[data-cms-toolbar]")) return null;
-  if (target.closest("[data-cms-sections]")) return null;
-  return nearestEditableImage(target) ?? (isTextEditable(target) ? target : null);
 }
 
 function getEditModeEnabled(): boolean {
@@ -121,6 +107,10 @@ async function loadPublishedOverrides(): Promise<ContentOverrides> {
   return EMPTY_OVERRIDES;
 }
 
+function defaultSpanForType(type: CmsSection["type"]): CmsSection["span"] {
+  return type === "image" ? "half" : "full";
+}
+
 type ImageEditState = {
   selector: string;
   src: string;
@@ -139,7 +129,6 @@ export function EditModeRuntime() {
   const [status, setStatus] = useState("");
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const [dragMode, setDragMode] = useState(false);
   const [imageEdit, setImageEdit] = useState<ImageEditState | null>(null);
 
   const canEdit = editEnabled && authed;
@@ -182,23 +171,19 @@ export function EditModeRuntime() {
   useEffect(() => {
     if (!canEdit) {
       document.body.classList.remove("cms-edit-mode");
-      document.body.classList.remove("cms-drag-mode");
       return;
     }
     document.body.classList.add("cms-edit-mode");
-    document.body.classList.toggle("cms-drag-mode", dragMode);
-    return () => {
-      document.body.classList.remove("cms-edit-mode");
-      document.body.classList.remove("cms-drag-mode");
-    };
-  }, [canEdit, dragMode]);
+    return () => document.body.classList.remove("cms-edit-mode");
+  }, [canEdit]);
 
   useEffect(() => {
-    if (!canEdit || !loaded || dragMode) return;
+    if (!canEdit || !loaded) return;
 
     const onClick = (event: MouseEvent) => {
       const target = event.target;
       if (target instanceof HTMLElement && target.closest("[data-cms-toolbar]")) return;
+      if (target instanceof HTMLElement && target.closest("[data-cms-sections]")) return;
 
       const image = nearestEditableImage(target);
       if (image) {
@@ -231,69 +216,7 @@ export function EditModeRuntime() {
 
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
-  }, [canEdit, loaded, dragMode, updateDraft]);
-
-  useEffect(() => {
-    if (!canEdit || !loaded || !dragMode) return;
-
-    let active: HTMLElement | null = null;
-    let selector = "";
-    let startX = 0;
-    let startY = 0;
-    let originX = 0;
-    let originY = 0;
-
-    const onPointerDown = (event: PointerEvent) => {
-      if (event.button !== 0) return;
-      const target = nearestDraggable(event.target);
-      if (!target) return;
-      event.preventDefault();
-      event.stopPropagation();
-
-      active = target;
-      selector = getElementPath(target);
-      startX = event.clientX;
-      startY = event.clientY;
-      const current = draft.positions[selector] ?? { x: 0, y: 0 };
-      originX = current.x;
-      originY = current.y;
-      target.setPointerCapture(event.pointerId);
-    };
-
-    const onPointerMove = (event: PointerEvent) => {
-      if (!active) return;
-      const nextX = originX + (event.clientX - startX);
-      const nextY = originY + (event.clientY - startY);
-      active.style.transform = `translate(${nextX}px, ${nextY}px)`;
-      active.style.position = active.style.position || "relative";
-    };
-
-    const onPointerUp = (event: PointerEvent) => {
-      if (!active) return;
-      const nextX = originX + (event.clientX - startX);
-      const nextY = originY + (event.clientY - startY);
-      const path = selector;
-      updateDraft((current) => ({
-        ...current,
-        positions: {
-          ...current.positions,
-          [path]: { x: nextX, y: nextY },
-        },
-      }));
-      setStatus("Unsaved changes — click Save when ready.");
-      active = null;
-      selector = "";
-    };
-
-    document.addEventListener("pointerdown", onPointerDown, true);
-    document.addEventListener("pointermove", onPointerMove, true);
-    document.addEventListener("pointerup", onPointerUp, true);
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown, true);
-      document.removeEventListener("pointermove", onPointerMove, true);
-      document.removeEventListener("pointerup", onPointerUp, true);
-    };
-  }, [canEdit, loaded, dragMode, draft.positions, updateDraft]);
+  }, [canEdit, loaded, updateDraft]);
 
   const handleSave = async () => {
     if (!adminEmail) {
@@ -357,12 +280,16 @@ export function EditModeRuntime() {
         ? ""
         : window.prompt("Section text:", "Write your content here.") ?? "";
 
+    const sectionId = createId("section");
+
     updateDraft((current) => {
-      const pageSections = current.sections.filter((section) => section.pageKey === pageKey);
+      const pageSections = current.sections
+        .filter((section) => section.pageKey === pageKey)
+        .sort((a, b) => a.order - b.order);
       const nextOrder =
         pageSections.reduce((max, section) => Math.max(max, section.order), -1) + 1;
       const section: CmsSection = {
-        id: createId("section"),
+        id: sectionId,
         pageKey,
         type,
         title: title.trim(),
@@ -370,13 +297,28 @@ export function EditModeRuntime() {
         imageSrc: "",
         imageAlt: "",
         order: nextOrder,
+        span: defaultSpanForType(type),
       };
       return {
         ...current,
         sections: [...current.sections, section],
       };
     });
-    setStatus("Section added — click Save when ready.");
+
+    setStatus("Section added at the end of the page grid — drag to reorder, then Save.");
+    window.setTimeout(() => {
+      document
+        .querySelector(`[data-cms-section-id="${sectionId}"]`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 50);
+
+    if (type !== "text") {
+      setImageEdit({
+        selector: `cms-section:${sectionId}`,
+        src: "",
+        alt: "",
+      });
+    }
   };
 
   const handleAddPage = () => {
@@ -426,6 +368,36 @@ export function EditModeRuntime() {
     }
   };
 
+  const handleMoveSection = (sectionId: string, toIndex: number) => {
+    updateDraft((current) => {
+      const pageKey = getCurrentPageKey();
+      const pageSections = current.sections
+        .filter((section) => section.pageKey === pageKey)
+        .sort((a, b) => a.order - b.order);
+      const fromIndex = pageSections.findIndex((section) => section.id === sectionId);
+      if (fromIndex < 0) return current;
+
+      const clamped = Math.max(0, Math.min(pageSections.length - 1, toIndex));
+      if (fromIndex === clamped) return current;
+
+      const nextPageSections = [...pageSections];
+      const [moved] = nextPageSections.splice(fromIndex, 1);
+      nextPageSections.splice(clamped, 0, moved);
+
+      const reordered = nextPageSections.map((section, index) => ({
+        ...section,
+        order: index,
+      }));
+      const byId = new Map(reordered.map((section) => [section.id, section]));
+
+      return {
+        ...current,
+        sections: current.sections.map((section) => byId.get(section.id) ?? section),
+      };
+    });
+    setStatus("Unsaved changes — click Save when ready.");
+  };
+
   const hasChanges = JSON.stringify(draft) !== JSON.stringify(published);
 
   return (
@@ -442,30 +414,7 @@ export function EditModeRuntime() {
             }));
             setStatus("Unsaved changes — click Save when ready.");
           }}
-          onReorderSection={(sectionId, direction) => {
-            updateDraft((current) => {
-              const pageKey = getCurrentPageKey();
-              const pageSections = current.sections
-                .filter((section) => section.pageKey === pageKey)
-                .sort((a, b) => a.order - b.order);
-              const index = pageSections.findIndex((section) => section.id === sectionId);
-              const swapWith = index + direction;
-              if (index < 0 || swapWith < 0 || swapWith >= pageSections.length) {
-                return current;
-              }
-              const a = pageSections[index];
-              const b = pageSections[swapWith];
-              return {
-                ...current,
-                sections: current.sections.map((section) => {
-                  if (section.id === a.id) return { ...section, order: b.order };
-                  if (section.id === b.id) return { ...section, order: a.order };
-                  return section;
-                }),
-              };
-            });
-            setStatus("Unsaved changes — click Save when ready.");
-          }}
+          onMoveSection={handleMoveSection}
         />
       ) : null}
 
@@ -473,7 +422,8 @@ export function EditModeRuntime() {
         <aside data-cms-toolbar className="cms-toolbar">
           <strong className="cms-toolbar__title">Edit mode</strong>
           <p className="cms-toolbar__text">
-            Click text to edit. Click images to upload/URL. Toggle drag to reposition.
+            Click text/images to edit. New blocks land in the page grid — drag handles to
+            reorder (touch friendly).
           </p>
           <div className="cms-toolbar__actions">
             <button
@@ -491,13 +441,6 @@ export function EditModeRuntime() {
               onClick={() => void handleReset()}
             >
               Reset to original
-            </button>
-            <button
-              type="button"
-              className={`cms-toolbar__button ${dragMode ? "cms-toolbar__button--primary" : ""}`}
-              onClick={() => setDragMode((value) => !value)}
-            >
-              {dragMode ? "Drag on" : "Drag off"}
             </button>
             <button
               type="button"

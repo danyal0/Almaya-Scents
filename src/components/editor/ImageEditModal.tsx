@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { uploadCmsImage } from "@/lib/firebase-storage";
+import { formatStorageError, uploadCmsImage } from "@/lib/firebase-storage";
 
 type ImageEditModalProps = {
   initialSrc: string;
@@ -53,6 +53,7 @@ export function ImageEditModal({
           <input
             type="file"
             accept="image/*"
+            capture="environment"
             disabled={uploading}
             className="cms-modal__file"
             onChange={async (event) => {
@@ -64,13 +65,10 @@ export function ImageEditModal({
                 const url = await uploadCmsImage(file);
                 setSrc(url);
               } catch (uploadError) {
-                const message =
-                  uploadError instanceof Error
-                    ? uploadError.message
-                    : "Upload failed. Enable Firebase Storage and publish storage rules.";
-                setError(message);
+                setError(formatStorageError(uploadError));
               } finally {
                 setUploading(false);
+                event.target.value = "";
               }
             }}
           />
@@ -85,7 +83,12 @@ export function ImageEditModal({
         {uploading ? <p className="cms-modal__text">Uploading…</p> : null}
 
         <div className="cms-modal__actions">
-          <button type="button" className="cms-toolbar__button" onClick={onCancel}>
+          <button
+            type="button"
+            className="cms-toolbar__button"
+            onClick={onCancel}
+            disabled={uploading}
+          >
             Cancel
           </button>
           <button
