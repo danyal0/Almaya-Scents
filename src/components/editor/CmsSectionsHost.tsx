@@ -13,7 +13,10 @@ import {
   type CmsSection,
   type ContentOverrides,
 } from "@/lib/edit-overrides";
-import { findSectionIndexAtPoint } from "@/lib/cms-section-order";
+import {
+  findSectionIndexAtPoint,
+  moveIdInList,
+} from "@/lib/cms-section-order";
 import { loadFirebaseOverrides } from "@/lib/firebase-overrides";
 
 export const CMS_SECTIONS_SLOT_ID = "cms-page-sections";
@@ -61,7 +64,8 @@ type CmsSectionsHostProps = {
   canEdit?: boolean;
   onEditSection?: (section: CmsSection) => void;
   onDeleteSection?: (sectionId: string) => void;
-  onMoveSection?: (sectionId: string, toIndex: number) => void;
+  /** Receives the full visible-page section id order after a reorder. */
+  onReorderSections?: (orderedIds: string[]) => void;
 };
 
 export function CmsSectionsHost({
@@ -69,10 +73,12 @@ export function CmsSectionsHost({
   canEdit = false,
   onEditSection,
   onDeleteSection,
-  onMoveSection,
+  onReorderSections,
 }: CmsSectionsHostProps) {
   const [remote, setRemote] = useState<ContentOverrides>(EMPTY_OVERRIDES);
-  const pageKey = typeof window === "undefined" ? "/" : getCurrentPageKey();
+  const [pageKey, setPageKey] = useState(() =>
+    typeof window === "undefined" ? "/" : getCurrentPageKey(),
+  );
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
@@ -80,11 +86,15 @@ export function CmsSectionsHost({
   const draggingIdRef = useRef<string | null>(null);
   const dropIndexRef = useRef<number | null>(null);
   const sectionsRef = useRef<CmsSection[]>([]);
-  const onMoveSectionRef = useRef(onMoveSection);
+  const onReorderSectionsRef = useRef(onReorderSections);
 
   useEffect(() => {
-    onMoveSectionRef.current = onMoveSection;
-  }, [onMoveSection]);
+    onReorderSectionsRef.current = onReorderSections;
+  }, [onReorderSections]);
+
+  useEffect(() => {
+    setPageKey(getCurrentPageKey());
+  }, []);
 
   useEffect(() => {
     if (draft) return;
@@ -111,6 +121,13 @@ export function CmsSectionsHost({
     sectionsRef.current = sections;
   }, [sections]);
 
+  const commitReorder = (sectionId: string, toIndex: number) => {
+    const ids = sectionsRef.current.map((section) => section.id);
+    const nextIds = moveIdInList(ids, sectionId, toIndex);
+    if (nextIds === ids || nextIds.every((id, index) => id === ids[index])) return;
+    onReorderSectionsRef.current?.(nextIds);
+  };
+
   useEffect(() => {
     if (!canEdit) return;
 
@@ -134,9 +151,7 @@ export function CmsSectionsHost({
       setDropIndex(null);
 
       if (!activeId || targetIndex === null) return;
-      const fromIndex = sectionsRef.current.findIndex((section) => section.id === activeId);
-      if (fromIndex < 0 || fromIndex === targetIndex) return;
-      onMoveSectionRef.current?.(activeId, targetIndex);
+      commitReorder(activeId, targetIndex);
     };
 
     document.addEventListener("pointermove", onPointerMove, { passive: true });
@@ -183,10 +198,14 @@ export function CmsSectionsHost({
                     className="cms-toolbar__button cms-drag-handle"
                     aria-label={`Drag to reorder ${section.title || "section"}`}
                     onPointerDown={(event) => {
-                      // Ignore non-primary buttons / mouse right click.
                       if (event.button !== 0) return;
                       event.preventDefault();
                       event.stopPropagation();
+                      try {
+                        event.currentTarget.setPointerCapture(event.pointerId);
+                      } catch {
+                        // Pointer capture is best-effort on older browsers.
+                      }
                       startDrag(section.id, index);
                     }}
                   >
@@ -195,18 +214,25 @@ export function CmsSectionsHost({
                   <button
                     type="button"
                     className="cms-toolbar__button"
-                    onClick={() => onEditSection?.(section)}
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      onEditSection?.(section);
+                    }}
                   >
                     Edit
                   </button>
                   <button
                     type="button"
                     className="cms-toolbar__button"
+                    aria-label={`Move ${section.title || "section"} up`}
+                    disabled={index === 0}
                     onPointerDown={(event) => event.stopPropagation()}
                     onClick={(event) => {
                       event.preventDefault();
                       event.stopPropagation();
-                      onMoveSection?.(section.id, Math.max(0, index - 1));
+                      commitReorder(section.id, index - 1);
                     }}
                   >
                     Up
@@ -214,14 +240,13 @@ export function CmsSectionsHost({
                   <button
                     type="button"
                     className="cms-toolbar__button"
+                    aria-label={`Move ${section.title || "section"} down`}
+                    disabled={index >= sections.length - 1}
                     onPointerDown={(event) => event.stopPropagation()}
                     onClick={(event) => {
                       event.preventDefault();
                       event.stopPropagation();
-                      onMoveSection?.(
-                        section.id,
-                        Math.min(sections.length - 1, index + 1),
-                      );
+                      commitReorder(section.id, index + 1);
                     }}
                   >
                     Down

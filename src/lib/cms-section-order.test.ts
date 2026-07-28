@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import type { CmsSection, ContentOverrides } from "@/lib/edit-overrides";
-import { moveSectionInList } from "@/lib/cms-section-order";
+import {
+  applyVisibleSectionOrder,
+  getVisiblePageSections,
+  moveIdInList,
+  moveSectionInList,
+} from "@/lib/cms-section-order";
 
 function section(id: string, order: number, pageKey = "/"): CmsSection {
   return {
@@ -14,26 +19,6 @@ function section(id: string, order: number, pageKey = "/"): CmsSection {
     imageAlt: "",
     order,
     span: "full",
-  };
-}
-
-/** Mirrors EditModeRuntime.handleMoveSection pageKey resolution. */
-function moveBySectionId(
-  current: ContentOverrides,
-  sectionId: string,
-  toIndex: number,
-): ContentOverrides {
-  const target = current.sections.find((item) => item.id === sectionId);
-  if (!target) return current;
-  const pageSections = current.sections
-    .filter((item) => item.pageKey === target.pageKey)
-    .sort((a, b) => a.order - b.order);
-  const reordered = moveSectionInList(pageSections, sectionId, toIndex);
-  if (reordered === pageSections) return current;
-  const byId = new Map(reordered.map((item) => [item.id, item]));
-  return {
-    ...current,
-    sections: current.sections.map((item) => byId.get(item.id) ?? item),
   };
 }
 
@@ -64,8 +49,15 @@ describe("moveSectionInList", () => {
   });
 });
 
-describe("Up/Down reorder by section pageKey", () => {
-  it("reorders even when URL page key would not match section pageKey", () => {
+describe("moveIdInList", () => {
+  it("reorders ids", () => {
+    expect(moveIdInList(["a", "b", "c"], "a", 2)).toEqual(["b", "c", "a"]);
+    expect(moveIdInList(["a", "b", "c"], "c", 0)).toEqual(["c", "a", "b"]);
+  });
+});
+
+describe("applyVisibleSectionOrder", () => {
+  it("reorders even when visible sections have mixed legacy pageKeys", () => {
     const current: ContentOverrides = {
       texts: {},
       images: {},
@@ -73,16 +65,34 @@ describe("Up/Down reorder by section pageKey", () => {
       pages: [],
       sections: [
         section("a", 0, "/Almaya-Scents/"),
-        section("b", 1, "/Almaya-Scents/"),
+        section("b", 1, "/"),
+        section("other", 0, "custom:lookbook"),
       ],
     };
 
-    const moved = moveBySectionId(current, "a", 1);
+    const moved = applyVisibleSectionOrder(current, ["b", "a"], "/");
+    const home = getVisiblePageSections(moved.sections, "/");
+    expect(home.map((item) => item.id)).toEqual(["b", "a"]);
+    expect(home.map((item) => item.pageKey)).toEqual(["/", "/"]);
+    expect(moved.sections.find((item) => item.id === "other")?.order).toBe(0);
+  });
+
+  it("updates order fields used by the grid sort", () => {
+    const current: ContentOverrides = {
+      texts: {},
+      images: {},
+      positions: {},
+      pages: [],
+      sections: [section("a", 0), section("b", 1), section("c", 2)],
+    };
+
+    const moved = applyVisibleSectionOrder(current, ["c", "a", "b"], "/");
     expect(
-      moved.sections
-        .filter((item) => item.pageKey === "/Almaya-Scents/")
-        .sort((a, b) => a.order - b.order)
-        .map((item) => item.id),
-    ).toEqual(["b", "a"]);
+      getVisiblePageSections(moved.sections, "/").map((item) => [item.id, item.order]),
+    ).toEqual([
+      ["c", 0],
+      ["a", 1],
+      ["b", 2],
+    ]);
   });
 });

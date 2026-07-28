@@ -1,8 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { CmsSectionsHost } from "@/components/editor/CmsSectionsHost";
+import { applyVisibleSectionOrder } from "@/lib/cms-section-order";
 import type { ContentOverrides } from "@/lib/edit-overrides";
 
 function draftWithTwoSections(): ContentOverrides {
@@ -38,17 +40,36 @@ function draftWithTwoSections(): ContentOverrides {
   };
 }
 
-describe("CmsSectionsHost drag", () => {
-  it("calls onMoveSection when dragging one card onto another", async () => {
+function StatefulHost({
+  initial,
+  pageKey = "/",
+}: {
+  initial: ContentOverrides;
+  pageKey?: string;
+}) {
+  const [draft, setDraft] = useState(initial);
+  return (
+    <CmsSectionsHost
+      draft={draft}
+      canEdit
+      onReorderSections={(orderedIds) => {
+        setDraft((current) => applyVisibleSectionOrder(current, orderedIds, pageKey));
+      }}
+    />
+  );
+}
+
+describe("CmsSectionsHost reorder", () => {
+  it("calls onReorderSections when dragging one card onto another", async () => {
     document.body.innerHTML = `<main id="main-content"><div id="cms-page-sections"></div></main>`;
-    const onMoveSection = vi.fn();
+    const onReorderSections = vi.fn();
     const user = userEvent.setup();
 
     render(
       <CmsSectionsHost
         draft={draftWithTwoSections()}
         canEdit
-        onMoveSection={onMoveSection}
+        onReorderSections={onReorderSections}
       />,
     );
 
@@ -72,24 +93,44 @@ describe("CmsSectionsHost drag", () => {
       { keys: "[/MouseLeft]" },
     ]);
 
-    expect(onMoveSection).toHaveBeenCalledWith("sec-a", 1);
+    expect(onReorderSections).toHaveBeenCalledWith(["sec-b", "sec-a"]);
   });
 
-  it("moves with Up/Down buttons", async () => {
+  it("moves with Up/Down buttons and updates visible DOM order", async () => {
     document.body.innerHTML = `<main id="main-content"><div id="cms-page-sections"></div></main>`;
-    const onMoveSection = vi.fn();
     const user = userEvent.setup();
 
-    render(
-      <CmsSectionsHost
-        draft={draftWithTwoSections()}
-        canEdit
-        onMoveSection={onMoveSection}
-      />,
-    );
+    render(<StatefulHost initial={draftWithTwoSections()} />);
 
-    const downs = await screen.findAllByRole("button", { name: "Down" });
-    await user.click(downs[0]!);
-    expect(onMoveSection).toHaveBeenCalledWith("sec-a", 1);
+    const grid = await screen.findByText("First block");
+    expect(grid).toBeTruthy();
+
+    const down = await screen.findByRole("button", { name: /move first block down/i });
+    await user.click(down);
+
+    const cards = document.querySelectorAll("[data-cms-section-id]");
+    expect(Array.from(cards).map((card) => card.getAttribute("data-cms-section-id"))).toEqual([
+      "sec-b",
+      "sec-a",
+    ]);
+
+    const up = await screen.findByRole("button", { name: /move first block up/i });
+    await user.click(up);
+
+    const cardsAfter = document.querySelectorAll("[data-cms-section-id]");
+    expect(
+      Array.from(cardsAfter).map((card) => card.getAttribute("data-cms-section-id")),
+    ).toEqual(["sec-a", "sec-b"]);
+  });
+
+  it("Down is disabled on the last card", async () => {
+    document.body.innerHTML = `<main id="main-content"><div id="cms-page-sections"></div></main>`;
+
+    render(<StatefulHost initial={draftWithTwoSections()} />);
+
+    const lastDown = await screen.findByRole("button", {
+      name: /move second block down/i,
+    });
+    expect(lastDown).toBeDisabled();
   });
 });

@@ -17,7 +17,10 @@ import {
   normalizeOverrides,
   writeStoredOverrides,
 } from "@/lib/edit-overrides";
-import { moveSectionInList } from "@/lib/cms-section-order";
+import {
+  applyVisibleSectionOrder,
+  getVisiblePageSections,
+} from "@/lib/cms-section-order";
 import { siteConfig } from "@/content/site-config";
 import { firebaseAuth } from "@/lib/firebase";
 import {
@@ -292,9 +295,7 @@ export function EditModeRuntime() {
     const sectionId = createId("section");
 
     updateDraft((current) => {
-      const pageSections = current.sections
-        .filter((section) => section.pageKey === pageKey)
-        .sort((a, b) => a.order - b.order);
+      const pageSections = getVisiblePageSections(current.sections, pageKey);
       const nextOrder =
         pageSections.reduce((max, section) => Math.max(max, section.order), -1) + 1;
       const section: CmsSection = {
@@ -377,24 +378,9 @@ export function EditModeRuntime() {
     }
   };
 
-  const handleMoveSection = (sectionId: string, toIndex: number) => {
-    updateDraft((current) => {
-      const target = current.sections.find((section) => section.id === sectionId);
-      if (!target) {
-        return current;
-      }
-      // Use the section's own pageKey so URL/base-path mismatches don't no-op.
-      const pageSections = current.sections
-        .filter((section) => section.pageKey === target.pageKey)
-        .sort((a, b) => a.order - b.order);
-      const reordered = moveSectionInList(pageSections, sectionId, toIndex);
-      if (reordered === pageSections) return current;
-      const byId = new Map(reordered.map((section) => [section.id, section]));
-      return {
-        ...current,
-        sections: current.sections.map((section) => byId.get(section.id) ?? section),
-      };
-    });
+  const handleReorderSections = (orderedIds: string[]) => {
+    const pageKey = getCurrentPageKey();
+    updateDraft((current) => applyVisibleSectionOrder(current, orderedIds, pageKey));
     setStatus("Unsaved changes — click Save when ready.");
   };
 
@@ -414,7 +400,7 @@ export function EditModeRuntime() {
             }));
             setStatus("Unsaved changes — click Save when ready.");
           }}
-          onMoveSection={handleMoveSection}
+          onReorderSections={handleReorderSections}
         />
       ) : null}
 

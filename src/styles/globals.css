@@ -318,6 +318,10 @@ body.cms-edit-mode :where(h1, h2, h3, h4, h5, h6, p, span, small, strong, em, bl
   background: var(--ivory);
 }
 
+body.cms-edit-mode .cms-extra-sections {
+  padding-bottom: 8rem;
+}
+
 .cms-section-card {
   position: relative;
   z-index: 1;
@@ -348,10 +352,17 @@ body.cms-edit-mode :where(h1, h2, h3, h4, h5, h6, p, span, small, strong, em, bl
 }
 
 .cms-section-card__tools {
+  position: relative;
+  z-index: 6;
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
   margin-bottom: 0.75rem;
+}
+
+.cms-section-card__tools .cms-toolbar__button {
+  min-height: 2.75rem;
+  touch-action: manipulation;
 }
 
 .cms-drag-handle {

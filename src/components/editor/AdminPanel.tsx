@@ -59,8 +59,8 @@ export function AdminPanel() {
         <h1 className="font-serif text-display-m font-light text-ink">Back Office</h1>
         <p className="mt-4 text-body text-charcoal/80">
           Log in, then open any page with <code>?edit=1</code>. From the floating toolbar you
-          can edit text/images, upload images, drag to reposition, add sections, and create
-          pages. Use Save or Reset to original when finished.
+          can edit text/images, upload images, reorder grid blocks with Drag or Up/Down, add
+          sections, and create pages. Use Save or Reset to original when finished.
         </p>
 
         <section className="mt-10 border-t border-line pt-8">
@@ -165,8 +165,8 @@ export function AdminPanel() {
               <h2 className="font-serif text-heading font-light text-ink">Start editing</h2>
               <p className="mt-3 text-body-sm text-muted">
                 Open a page with <code>?edit=1</code>. From the toolbar you can:
-                edit text, replace images via URL/upload, drag to reposition, add
-                text/image sections, create pages, then <strong>Save</strong> or{" "}
+                edit text, replace images via URL/upload, reorder grid blocks with Drag or
+                Up/Down, add text/image sections, create pages, then <strong>Save</strong> or{" "}
                 <strong>Reset to original</strong>.
               </p>
               <a

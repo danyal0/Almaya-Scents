@@ -81,7 +81,26 @@ export function normalizePageKey(pathname: string, search = ""): string {
 }
 
 export function pageKeysMatch(a: string, b: string): boolean {
-  return normalizePageKey(a) === normalizePageKey(b) || a === b;
+  if (a === b) return true;
+  const na = normalizePageKey(a);
+  const nb = normalizePageKey(b);
+  if (na === nb) return true;
+
+  // Legacy CMS docs sometimes stored the GitHub Pages base path in pageKey
+  // (e.g. "/Almaya-Scents/" instead of "/"). Compare with that prefix removed.
+  if (PUBLIC_BASE_PATH) {
+    const stripBase = (key: string) => {
+      const raw = key.startsWith("/") ? key : `/${key}`;
+      if (raw === PUBLIC_BASE_PATH || raw === `${PUBLIC_BASE_PATH}/`) return "/";
+      if (raw.startsWith(`${PUBLIC_BASE_PATH}/`)) {
+        return normalizePageKey(raw.slice(PUBLIC_BASE_PATH.length) || "/");
+      }
+      return normalizePageKey(key);
+    };
+    if (stripBase(a) === stripBase(b)) return true;
+  }
+
+  return false;
 }
 
 export function createId(prefix: string): string {
