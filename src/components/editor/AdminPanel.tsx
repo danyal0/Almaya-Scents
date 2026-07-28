@@ -99,8 +99,7 @@ export function AdminPanel() {
   const [authed, setAuthed] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const isAllowedAdmin =
-    currentUser?.email?.toLowerCase() === siteConfig.adminEmail.toLowerCase() &&
-    currentUser.emailVerified;
+    currentUser?.email?.toLowerCase() === siteConfig.adminEmail.toLowerCase();
 
   useEffect(() => {
     return onAuthStateChanged(firebaseAuth, (user) => {
@@ -190,7 +189,7 @@ export function AdminPanel() {
                       );
                       await sendEmailVerification(credentials.user);
                       setStatus(
-                        `Admin account created. Verify ${siteConfig.adminEmail} from your inbox before admin access is enabled.`,
+                        `Admin account created. Verification email sent to ${siteConfig.adminEmail}, but admin access is enabled immediately for this email.`,
                       );
                     } catch (error) {
                       setStatus(getAuthErrorMessage(error));
@@ -209,7 +208,7 @@ export function AdminPanel() {
               {!isAllowedAdmin ? (
                 <p className="text-body-sm text-muted">
                   Admin access is restricted to <span className="text-ink">{siteConfig.adminEmail}</span>
-                  {" "}with a verified email address.
+                  .
                 </p>
               ) : null}
               <div className="flex flex-wrap gap-3">
