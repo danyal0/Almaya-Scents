@@ -160,21 +160,49 @@ export function AdminPanel() {
         </section>
 
         {authed && isAllowedAdmin ? (
-          <section className="mt-10 border-t border-line pt-8">
-            <h2 className="font-serif text-heading font-light text-ink">Start editing</h2>
-            <p className="mt-3 text-body-sm text-muted">
-              Open a page with <code>?edit=1</code>. From the toolbar you can:
-              edit text, replace images via URL/upload, drag to reposition, add
-              text/image sections, create pages, then <strong>Save</strong> or{" "}
-              <strong>Reset to original</strong>.
-            </p>
-            <a
-              href={resolvePublicPath("/?edit=1")}
-              className="mt-4 inline-flex min-h-11 items-center justify-center bg-ink px-8 py-3 font-sans text-meta uppercase tracking-[0.18em] text-ivory"
-            >
-              Open homepage in edit mode
-            </a>
-          </section>
+          <>
+            <section className="mt-10 border-t border-line pt-8">
+              <h2 className="font-serif text-heading font-light text-ink">Start editing</h2>
+              <p className="mt-3 text-body-sm text-muted">
+                Open a page with <code>?edit=1</code>. From the toolbar you can:
+                edit text, replace images via URL/upload, drag to reposition, add
+                text/image sections, create pages, then <strong>Save</strong> or{" "}
+                <strong>Reset to original</strong>.
+              </p>
+              <a
+                href={resolvePublicPath("/?edit=1")}
+                className="mt-4 inline-flex min-h-11 items-center justify-center bg-ink px-8 py-3 font-sans text-meta uppercase tracking-[0.18em] text-ivory"
+              >
+                Open homepage in edit mode
+              </a>
+            </section>
+
+            <section className="mt-10 border-t border-line pt-8">
+              <h2 className="font-serif text-heading font-light text-ink">
+                If Save says permission denied
+              </h2>
+              <p className="mt-3 text-body-sm text-muted">
+                Paste this in <strong>Firestore → Rules</strong> (not Storage), then click
+                Publish. Then log out and log in again.
+              </p>
+              <pre className="mt-4 overflow-x-auto border border-line bg-white p-4 text-left font-mono text-xs text-ink whitespace-pre-wrap">
+{`rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email is string
+        && request.auth.token.email.lower() == 'almayascents@mrcasm.com';
+    }
+    match /siteContent/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}`}
+              </pre>
+            </section>
+          </>
         ) : null}
 
         {status ? <p className="mt-8 text-body-sm text-ink">{status}</p> : null}
