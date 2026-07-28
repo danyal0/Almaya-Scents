@@ -17,6 +17,7 @@ import {
   normalizeOverrides,
   writeStoredOverrides,
 } from "@/lib/edit-overrides";
+import { moveSectionInList } from "@/lib/cms-section-order";
 import { siteConfig } from "@/content/site-config";
 import { firebaseAuth } from "@/lib/firebase";
 import {
@@ -374,22 +375,9 @@ export function EditModeRuntime() {
       const pageSections = current.sections
         .filter((section) => section.pageKey === pageKey)
         .sort((a, b) => a.order - b.order);
-      const fromIndex = pageSections.findIndex((section) => section.id === sectionId);
-      if (fromIndex < 0) return current;
-
-      const clamped = Math.max(0, Math.min(pageSections.length - 1, toIndex));
-      if (fromIndex === clamped) return current;
-
-      const nextPageSections = [...pageSections];
-      const [moved] = nextPageSections.splice(fromIndex, 1);
-      nextPageSections.splice(clamped, 0, moved);
-
-      const reordered = nextPageSections.map((section, index) => ({
-        ...section,
-        order: index,
-      }));
+      const reordered = moveSectionInList(pageSections, sectionId, toIndex);
+      if (reordered === pageSections) return current;
       const byId = new Map(reordered.map((section) => [section.id, section]));
-
       return {
         ...current,
         sections: current.sections.map((section) => byId.get(section.id) ?? section),
