@@ -278,6 +278,21 @@ body.cms-edit-mode :where(h1, h2, h3, h4, h5, h6, p, span, small, strong, em, bl
   color: var(--ink);
 }
 
+.cms-toolbar__button--primary {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--ivory);
+}
+
+.cms-toolbar__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cms-toolbar__text--warn {
+  color: var(--ink);
+}
+
 /* ------------------------------------------------------------------ */
 /* Reduced motion                                                       */
 /* ------------------------------------------------------------------ */
