@@ -3,10 +3,11 @@ service firebase.storage {
   match /b/{bucket}/o {
     match /cms-uploads/{allPaths=**} {
       allow read: if true;
+      // Authenticated admin only. Keep rules simple so mobile photo uploads
+      // are not rejected by contentType mismatches (common on iPhone).
       allow write: if request.auth != null
         && request.auth.token.email == 'almayascents@mrcasm.com'
-        && request.resource.size < 8 * 1024 * 1024
-        && request.resource.contentType.matches('image/.*');
+        && request.resource.size < 8 * 1024 * 1024;
     }
   }
 }

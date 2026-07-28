@@ -26,7 +26,10 @@ export function ImageEditModal({
     <div className="cms-modal" role="dialog" aria-modal="true" aria-label="Edit image">
       <div className="cms-modal__panel" data-cms-toolbar>
         <h2 className="cms-modal__title">Edit image</h2>
-        <p className="cms-modal__text">Paste a URL or upload an image file.</p>
+        <p className="cms-modal__text">
+          Paste a URL or upload from your photo library. Uploads use Firebase Storage
+          (separate from Firestore Save).
+        </p>
 
         <label className="cms-modal__label">
           Image URL
@@ -52,7 +55,7 @@ export function ImageEditModal({
           Upload image
           <input
             type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
+            accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.gif,.heic,.heif"
             disabled={uploading}
             className="cms-modal__file"
             onChange={async (event) => {
