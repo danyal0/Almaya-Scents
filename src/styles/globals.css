@@ -299,16 +299,43 @@ body.cms-edit-mode :where(h1, h2, h3, h4, h5, h6, p, span, small, strong, em, bl
   gap: 0.5rem;
 }
 
-body.cms-drag-mode {
-  cursor: grab;
+.cms-section-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
 }
 
-body.cms-drag-mode :where(h1, h2, h3, h4, h5, h6, p, span, img) {
-  cursor: grab;
+@media (min-width: 768px) {
+  .cms-section-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+  }
 }
 
 .cms-section-card {
   position: relative;
+  min-width: 0;
+  touch-action: manipulation;
+  border: 1px solid transparent;
+  padding: 0.25rem;
+}
+
+.cms-section-card--full {
+  grid-column: 1 / -1;
+}
+
+.cms-section-card--half {
+  grid-column: auto;
+}
+
+.cms-section-card.is-dragging {
+  opacity: 0.55;
+}
+
+.cms-section-card.is-drop-target {
+  border-color: var(--ink);
+  outline: 1px dashed var(--ink);
+  outline-offset: 4px;
 }
 
 .cms-section-card__tools {
@@ -316,6 +343,17 @@ body.cms-drag-mode :where(h1, h2, h3, h4, h5, h6, p, span, img) {
   flex-wrap: wrap;
   gap: 0.4rem;
   margin-bottom: 0.75rem;
+}
+
+.cms-drag-handle {
+  touch-action: none;
+  cursor: grab;
+  min-height: 2.75rem;
+  min-width: 4.5rem;
+}
+
+.cms-drag-handle:active {
+  cursor: grabbing;
 }
 
 .cms-modal {
@@ -330,6 +368,8 @@ body.cms-drag-mode :where(h1, h2, h3, h4, h5, h6, p, span, img) {
 
 .cms-modal__panel {
   width: min(28rem, 100%);
+  max-height: min(90dvh, 40rem);
+  overflow: auto;
   background: var(--ivory);
   border: 1px solid var(--line);
   padding: 1rem;
@@ -359,15 +399,17 @@ body.cms-drag-mode :where(h1, h2, h3, h4, h5, h6, p, span, img) {
 }
 
 .cms-modal__input {
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   border: 1px solid var(--line);
   background: white;
   padding: 0.4rem 0.6rem;
   color: var(--ink);
+  font-size: 16px;
 }
 
 .cms-modal__file {
   font-size: var(--text-body-sm);
+  min-height: 2.75rem;
 }
 
 .cms-modal__preview {
@@ -387,6 +429,10 @@ body.cms-drag-mode :where(h1, h2, h3, h4, h5, h6, p, span, img) {
   flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: flex-end;
+}
+
+.cms-modal__actions .cms-toolbar__button {
+  min-height: 2.75rem;
 }
 
 /* ------------------------------------------------------------------ */
