@@ -52,8 +52,7 @@ export function ImageEditModal({
           Upload image
           <input
             type="file"
-            accept="image/*"
-            capture="environment"
+            accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
             disabled={uploading}
             className="cms-modal__file"
             onChange={async (event) => {
