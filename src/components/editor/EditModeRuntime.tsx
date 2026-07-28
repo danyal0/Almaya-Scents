@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 
 import {
@@ -10,12 +10,11 @@ import {
   resolvePublicPath,
   type ContentOverrides,
   normalizeOverrides,
-  readStoredOverrides,
   writeStoredOverrides,
 } from "@/lib/edit-overrides";
 import { siteConfig } from "@/content/site-config";
 import { firebaseAuth } from "@/lib/firebase";
-import { loadFirebaseOverrides } from "@/lib/firebase-overrides";
+import { loadFirebaseOverrides, saveFirebaseOverrides } from "@/lib/firebase-overrides";
 
 const TEXT_SELECTOR =
   "h1,h2,h3,h4,h5,h6,p,span,small,strong,em,blockquote,figcaption,a,button,label,li";
@@ -77,23 +76,56 @@ function getEditModeEnabled(): boolean {
   return params.get("edit") === "1";
 }
 
+async function loadPublishedOverrides(): Promise<ContentOverrides> {
+  try {
+    const remote = await loadFirebaseOverrides();
+    if (remote) return remote;
+  } catch {
+    // Fall back to static file when Firestore is unavailable.
+  }
+
+  try {
+    const requestUrl = `${resolvePublicPath(OVERRIDES_FILE_PATH)}?t=${Date.now()}`;
+    const response = await fetch(requestUrl);
+    if (response.ok) {
+      return normalizeOverrides(await response.json());
+    }
+  } catch {
+    // No published overrides yet.
+  }
+
+  return EMPTY_OVERRIDES;
+}
+
 export function EditModeRuntime() {
-  const initialOverrides = readStoredOverrides();
   const initialEditEnabled =
     typeof window !== "undefined" && getEditModeEnabled();
 
-  const [overrides, setOverrides] = useState<ContentOverrides>(initialOverrides);
+  const [draft, setDraft] = useState<ContentOverrides>(EMPTY_OVERRIDES);
+  const [published, setPublished] = useState<ContentOverrides>(EMPTY_OVERRIDES);
   const [editEnabled] = useState(initialEditEnabled);
   const [authed, setAuthed] = useState(false);
-  const [savedNotice, setSavedNotice] = useState("");
+  const [adminEmail, setAdminEmail] = useState("");
+  const [status, setStatus] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   const canEdit = editEnabled && authed;
+
+  const updateDraft = useCallback((updater: (current: ContentOverrides) => ContentOverrides) => {
+    setDraft((current) => {
+      const next = updater(current);
+      applyOverrides(next);
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
       const allowed =
         user?.email?.toLowerCase() === siteConfig.adminEmail.toLowerCase();
       setAuthed(Boolean(allowed));
+      setAdminEmail(user?.email ?? "");
     });
 
     return unsubscribe;
@@ -101,34 +133,19 @@ export function EditModeRuntime() {
 
   useEffect(() => {
     let cancelled = false;
-    const local = initialOverrides;
-    applyOverrides(initialOverrides);
 
-    void loadFirebaseOverrides()
-      .catch(async () => {
-        const requestUrl = `${resolvePublicPath(OVERRIDES_FILE_PATH)}?t=${Date.now()}`;
-        const response = await fetch(requestUrl);
-        if (!response.ok) return EMPTY_OVERRIDES;
-        return normalizeOverrides(await response.json());
-      })
-      .then((remote) => {
-        if (cancelled) return;
-        const resolvedRemote = remote ?? EMPTY_OVERRIDES;
-        const merged: ContentOverrides = {
-          texts: { ...resolvedRemote.texts, ...local.texts },
-          images: { ...resolvedRemote.images, ...local.images },
-        };
-        setOverrides(merged);
-        applyOverrides(merged);
-      })
-      .catch(() => {
-        // No remote overrides file yet; local edits still work.
-      });
+    void loadPublishedOverrides().then((remote) => {
+      if (cancelled) return;
+      setPublished(remote);
+      setDraft(remote);
+      applyOverrides(remote);
+      setLoaded(true);
+    });
 
     return () => {
       cancelled = true;
     };
-  }, [initialOverrides]);
+  }, []);
 
   useEffect(() => {
     if (!canEdit) {
@@ -140,7 +157,7 @@ export function EditModeRuntime() {
   }, [canEdit]);
 
   useEffect(() => {
-    if (!canEdit) return;
+    if (!canEdit || !loaded) return;
 
     const onClick = (event: MouseEvent) => {
       const target = event.target;
@@ -153,16 +170,14 @@ export function EditModeRuntime() {
         if (!nextSrc) return;
         const nextAlt = window.prompt("Enter image alt text:", image.alt) ?? image.alt;
 
-        const next: ContentOverrides = {
-          texts: { ...overrides.texts },
+        updateDraft((current) => ({
+          texts: { ...current.texts },
           images: {
-            ...overrides.images,
+            ...current.images,
             [selector]: { src: nextSrc, alt: nextAlt },
           },
-        };
-        setOverrides(next);
-        writeStoredOverrides(next);
-        applyOverrides(next);
+        }));
+        setStatus("Unsaved changes — click Save when ready.");
         return;
       }
 
@@ -177,58 +192,104 @@ export function EditModeRuntime() {
       const nextText = window.prompt("Edit text:", currentText);
       if (nextText === null) return;
 
-      const next: ContentOverrides = {
-        texts: { ...overrides.texts, [selector]: nextText },
-        images: { ...overrides.images },
-      };
-      setOverrides(next);
-      writeStoredOverrides(next);
-      applyOverrides(next);
+      updateDraft((current) => ({
+        texts: { ...current.texts, [selector]: nextText },
+        images: { ...current.images },
+      }));
+      setStatus("Unsaved changes — click Save when ready.");
     };
 
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
-  }, [canEdit, overrides]);
+  }, [canEdit, loaded, updateDraft]);
 
-  const exportJson = useMemo(() => JSON.stringify(overrides, null, 2), [overrides]);
+  const handleSave = async () => {
+    if (!adminEmail) {
+      setStatus("You must be logged in to save.");
+      return;
+    }
+
+    setSaving(true);
+    setStatus("Saving…");
+
+    try {
+      await saveFirebaseOverrides(draft, adminEmail);
+      writeStoredOverrides(draft);
+      setPublished(draft);
+      setStatus("Saved. All visitors will see these changes.");
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unable to save changes.";
+      setStatus(
+        `Save failed: ${message}. Check Firestore is enabled and security rules allow your admin email to write.`,
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleReset = async () => {
+    const confirmed = window.confirm(
+      "Reset all content to the original site version? This removes saved overrides for everyone.",
+    );
+    if (!confirmed) return;
+
+    if (!adminEmail) {
+      setStatus("You must be logged in to reset.");
+      return;
+    }
+
+    setSaving(true);
+    setStatus("Resetting…");
+
+    try {
+      await saveFirebaseOverrides(EMPTY_OVERRIDES, adminEmail);
+      clearStoredOverrides();
+      setDraft(EMPTY_OVERRIDES);
+      setPublished(EMPTY_OVERRIDES);
+      setStatus("Reset complete. Reloading…");
+      window.location.reload();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unable to reset content.";
+      setStatus(`Reset failed: ${message}`);
+      setSaving(false);
+    }
+  };
 
   if (!canEdit) return null;
+
+  const hasChanges =
+    JSON.stringify(draft) !== JSON.stringify(published);
 
   return (
     <aside data-cms-toolbar className="cms-toolbar">
       <strong className="cms-toolbar__title">Edit mode</strong>
       <p className="cms-toolbar__text">
-        Click any text or image to edit. Changes are stored in your browser.
+        Click any text or image to edit. Then save or reset below.
       </p>
       <div className="cms-toolbar__actions">
         <button
           type="button"
-          className="cms-toolbar__button"
-          onClick={() => {
-            navigator.clipboard.writeText(exportJson).catch(() => {
-              // Clipboard API can be unavailable; ignore.
-            });
-            setSavedNotice("Copied JSON.");
-          }}
+          className="cms-toolbar__button cms-toolbar__button--primary"
+          disabled={saving}
+          onClick={() => void handleSave()}
         >
-          Copy JSON
+          {saving ? "Saving…" : "Save"}
         </button>
         <button
           type="button"
           className="cms-toolbar__button"
-          onClick={() => {
-            clearStoredOverrides();
-            setOverrides(EMPTY_OVERRIDES);
-            window.location.reload();
-          }}
+          disabled={saving}
+          onClick={() => void handleReset()}
         >
-          Reset local edits
+          Reset to original
         </button>
-        <a className="cms-toolbar__button" href={resolvePublicPath("/admin/")}>
-          Open admin
-        </a>
       </div>
-      {savedNotice ? <p className="cms-toolbar__text">{savedNotice}</p> : null}
+      {hasChanges ? (
+        <p className="cms-toolbar__text cms-toolbar__text--warn">You have unsaved changes.</p>
+      ) : null}
+      {status ? <p className="cms-toolbar__text">{status}</p> : null}
     </aside>
   );
 }
