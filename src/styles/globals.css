@@ -312,12 +312,20 @@ body.cms-edit-mode :where(h1, h2, h3, h4, h5, h6, p, span, small, strong, em, bl
   }
 }
 
+.cms-extra-sections {
+  position: relative;
+  z-index: 1;
+  background: var(--ivory);
+}
+
 .cms-section-card {
   position: relative;
+  z-index: 1;
   min-width: 0;
   touch-action: manipulation;
   border: 1px solid transparent;
   padding: 0.25rem;
+  background: var(--ivory);
 }
 
 .cms-section-card--full {
@@ -330,6 +338,7 @@ body.cms-edit-mode :where(h1, h2, h3, h4, h5, h6, p, span, small, strong, em, bl
 
 .cms-section-card.is-dragging {
   opacity: 0.55;
+  z-index: 5;
 }
 
 .cms-section-card.is-drop-target {

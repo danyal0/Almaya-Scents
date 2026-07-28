@@ -47,7 +47,10 @@ export default function RootLayout({
         </a>
         <AnnouncementBar />
         <Header />
-        <main id="main-content">{children}</main>
+        <main id="main-content">
+          {children}
+          <div id="cms-page-sections" />
+        </main>
         <Footer />
         <EditModeRuntime />
       </body>

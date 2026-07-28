@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import {
   EMPTY_OVERRIDES,
@@ -12,6 +13,8 @@ import {
   type ContentOverrides,
 } from "@/lib/edit-overrides";
 import { loadFirebaseOverrides } from "@/lib/firebase-overrides";
+
+export const CMS_SECTIONS_SLOT_ID = "cms-page-sections";
 
 async function loadPublishedOverrides(): Promise<ContentOverrides> {
   try {
@@ -29,6 +32,31 @@ async function loadPublishedOverrides(): Promise<ContentOverrides> {
   }
 
   return EMPTY_OVERRIDES;
+}
+
+/**
+ * Place the CMS sections mount inside <main>, before the footer.
+ * Prefer just above the newsletter (natural editorial spot), otherwise
+ * at the end of main content.
+ */
+function placeSectionsMount(): HTMLElement | null {
+  const main = document.getElementById("main-content");
+  if (!main) return null;
+
+  let mount = document.getElementById(CMS_SECTIONS_SLOT_ID);
+  if (!(mount instanceof HTMLElement)) {
+    mount = document.createElement("div");
+    mount.id = CMS_SECTIONS_SLOT_ID;
+  }
+
+  const newsletter = document.getElementById("newsletter-heading")?.closest("section");
+  if (newsletter && main.contains(newsletter)) {
+    main.insertBefore(mount, newsletter);
+  } else {
+    main.appendChild(mount);
+  }
+
+  return mount;
 }
 
 type CmsSectionsHostProps = {
@@ -50,6 +78,7 @@ export function CmsSectionsHost({
   const [pageKey] = useState(() =>
     typeof window === "undefined" ? "/" : getCurrentPageKey(),
   );
+  const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
   const pointerIdRef = useRef<number | null>(null);
@@ -58,6 +87,14 @@ export function CmsSectionsHost({
     if (draft) return;
     void loadPublishedOverrides().then(setRemote);
   }, [draft]);
+
+  useEffect(() => {
+    const place = () => setMountNode(placeSectionsMount());
+    place();
+    // Re-run after paint in case page sections hydrate late.
+    const timer = window.setTimeout(place, 50);
+    return () => window.clearTimeout(timer);
+  }, [pageKey, draft?.sections.length]);
 
   const content = draft ?? remote;
   const sections = useMemo(
@@ -68,12 +105,11 @@ export function CmsSectionsHost({
     [content.sections, pageKey],
   );
 
-  if (sections.length === 0) return null;
-
-  const finishDrag = (clientX: number, clientY: number) => {
+  const finishDrag = () => {
     if (!draggingId || dropIndex === null) {
       setDraggingId(null);
       setDropIndex(null);
+      pointerIdRef.current = null;
       return;
     }
 
@@ -84,21 +120,20 @@ export function CmsSectionsHost({
       onMoveSection?.(draggingId, toIndex);
     }
 
-    // Prefer hit-testing when dropIndex wasn't updated recently.
-    void clientX;
-    void clientY;
-
     setDraggingId(null);
     setDropIndex(null);
     pointerIdRef.current = null;
   };
 
-  return (
+  if (!mountNode || sections.length === 0) return null;
+
+  const body = (
     <div className="cms-extra-sections section-gap" data-cms-sections>
       <div className="container-editorial">
         {canEdit ? (
           <p className="mb-8 text-body-sm text-muted">
-            Drag blocks with the handle to reorder them in the layout grid.
+            New blocks appear in the page content (above the footer). Drag to reorder
+            in the grid.
           </p>
         ) : null}
         <div className="cms-section-grid">
@@ -139,7 +174,7 @@ export function CmsSectionsHost({
                     }}
                     onPointerUp={(event) => {
                       if (pointerIdRef.current !== event.pointerId) return;
-                      finishDrag(event.clientX, event.clientY);
+                      finishDrag();
                     }}
                     onPointerCancel={() => {
                       setDraggingId(null);
@@ -159,12 +194,7 @@ export function CmsSectionsHost({
                   <button
                     type="button"
                     className="cms-toolbar__button"
-                    onClick={() =>
-                      onMoveSection?.(
-                        section.id,
-                        Math.max(0, index - 1),
-                      )
-                    }
+                    onClick={() => onMoveSection?.(section.id, Math.max(0, index - 1))}
                   >
                     Up
                   </button>
@@ -172,10 +202,7 @@ export function CmsSectionsHost({
                     type="button"
                     className="cms-toolbar__button"
                     onClick={() =>
-                      onMoveSection?.(
-                        section.id,
-                        Math.min(sections.length - 1, index + 1),
-                      )
+                      onMoveSection?.(section.id, Math.min(sections.length - 1, index + 1))
                     }
                   >
                     Down
@@ -215,11 +242,10 @@ export function CmsSectionsHost({
               ) : null}
             </article>
           ))}
-          {canEdit && dropIndex === sections.length ? (
-            <div className="cms-section-card cms-section-card--full is-drop-target" />
-          ) : null}
         </div>
       </div>
     </div>
   );
+
+  return createPortal(body, mountNode);
 }
