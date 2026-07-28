@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { FirebaseError } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -65,6 +66,27 @@ function toBase64(input: string): string {
   return window.btoa(binary);
 }
 
+function getAuthErrorMessage(error: unknown): string {
+  if (!(error instanceof FirebaseError)) {
+    return error instanceof Error ? error.message : "Unexpected authentication error.";
+  }
+
+  switch (error.code) {
+    case "auth/configuration-not-found":
+    case "auth/operation-not-allowed":
+      return "Firebase Email/Password auth is not enabled. In Firebase Console: Authentication -> Sign-in method -> enable Email/Password.";
+    case "auth/unauthorized-domain":
+      return "Current domain is not authorized in Firebase Auth. Add your site domain under Authentication -> Settings -> Authorized domains.";
+    case "auth/invalid-credential":
+    case "auth/invalid-login-credentials":
+      return "Invalid email or password.";
+    case "auth/email-already-in-use":
+      return "Account already exists for this email. Use Login instead of Create account.";
+    default:
+      return `${error.code}: ${error.message}`;
+  }
+}
+
 export function AdminPanel() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -108,6 +130,10 @@ export function AdminPanel() {
           <h2 className="font-serif text-heading font-light text-ink">Admin login</h2>
           {!authed ? (
             <div className="mt-6 flex flex-col gap-4">
+              <p className="text-body-sm text-muted">
+                If you see <code>auth/configuration-not-found</code>, enable Email/Password
+                in Firebase Authentication first.
+              </p>
               <input
                 type="email"
                 value={email}
@@ -138,9 +164,7 @@ export function AdminPanel() {
                       await signInWithEmailAndPassword(firebaseAuth, email, password);
                       setStatus("Logged in.");
                     } catch (error) {
-                      const message =
-                        error instanceof Error ? error.message : "Unable to log in.";
-                      setStatus(message);
+                      setStatus(getAuthErrorMessage(error));
                     }
                   }}
                 >
@@ -169,9 +193,7 @@ export function AdminPanel() {
                         `Admin account created. Verify ${siteConfig.adminEmail} from your inbox before admin access is enabled.`,
                       );
                     } catch (error) {
-                      const message =
-                        error instanceof Error ? error.message : "Unable to create account.";
-                      setStatus(message);
+                      setStatus(getAuthErrorMessage(error));
                     }
                   }}
                 >
