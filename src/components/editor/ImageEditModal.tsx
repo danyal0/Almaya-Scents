@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { formatStorageError, uploadCmsImage } from "@/lib/firebase-storage";
+import { formatImageUploadError, uploadCmsImage } from "@/lib/firebase-storage";
 
 type ImageEditModalProps = {
   initialSrc: string;
@@ -27,8 +27,8 @@ export function ImageEditModal({
       <div className="cms-modal__panel" data-cms-toolbar>
         <h2 className="cms-modal__title">Edit image</h2>
         <p className="cms-modal__text">
-          Paste a URL or upload from your photo library. Uploads use Firebase Storage
-          (separate from Firestore Save).
+          Paste a public image URL, or choose a photo from your library. Photos are
+          compressed and saved for free with your content (no paid Storage needed).
         </p>
 
         <label className="cms-modal__label">
@@ -52,10 +52,10 @@ export function ImageEditModal({
         </label>
 
         <label className="cms-modal__label">
-          Upload image
+          Choose photo
           <input
             type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.gif,.heic,.heif"
+            accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
             disabled={uploading}
             className="cms-modal__file"
             onChange={async (event) => {
@@ -64,10 +64,10 @@ export function ImageEditModal({
               setUploading(true);
               setError("");
               try {
-                const url = await uploadCmsImage(file);
-                setSrc(url);
+                const dataUrl = await uploadCmsImage(file);
+                setSrc(dataUrl);
               } catch (uploadError) {
-                setError(formatStorageError(uploadError));
+                setError(formatImageUploadError(uploadError));
               } finally {
                 setUploading(false);
                 event.target.value = "";
@@ -82,7 +82,7 @@ export function ImageEditModal({
         ) : null}
 
         {error ? <p className="cms-modal__error">{error}</p> : null}
-        {uploading ? <p className="cms-modal__text">Uploading…</p> : null}
+        {uploading ? <p className="cms-modal__text">Preparing image…</p> : null}
 
         <div className="cms-modal__actions">
           <button
