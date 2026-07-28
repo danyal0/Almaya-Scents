@@ -26,7 +26,7 @@ export const siteConfig = {
   /** Public WhatsApp order line published by Almaya Scents. */
   whatsappUrl: "https://wa.me/923070320103",
   whatsappDisplay: "+923070320103",
-  adminEmail: "admin@almayascents.com",
+  adminEmail: "almayascents@mrcasm.com",
 
   /**
    * Optional public contact email. Email actions are hidden when empty —
