@@ -71,6 +71,27 @@ Everything editable lives in three files:
 - `src/content/site-config.ts` — site name, titles, social links, env wiring
 - `src/content/navigation.ts` — header/footer/legal navigation
 
+### Visual back office (GitHub Pages compatible)
+
+This project includes a static **Back Office** at `/admin/`:
+
+- Firebase email/password login
+- inline visual edit mode (`?edit=1`) for text and images
+- shared content publishing through Firebase Firestore
+- local override storage in browser for draft edits
+- optional publish to GitHub using a personal access token
+
+Runtime overrides are read from:
+
+- `public/content-overrides.json`
+
+When Firebase is configured and Firestore contains a shared override document,
+the live site reads that remote content first. This means content changes can
+become visible for all viewers without waiting for a GitHub Pages redeploy.
+
+When you publish from `/admin/`, the editor updates that file in your repository.
+After GitHub Pages rebuilds, the new content is visible for all viewers.
+
 Image replacement is documented in
 [public/content/README.md](public/content/README.md) (filenames,
 dimensions, formats, file-size and alt-text guidance).

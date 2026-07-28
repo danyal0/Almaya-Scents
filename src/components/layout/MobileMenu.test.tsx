@@ -24,6 +24,7 @@ describe("MobileMenu", () => {
     render(<MobileMenu open onClose={() => {}} />);
     const user = userEvent.setup();
 
+    const dialog = screen.getByRole("dialog", { name: /site navigation/i });
     const closeButton = screen.getByRole("button", { name: /close menu/i });
     expect(closeButton).toHaveFocus();
 
@@ -32,9 +33,9 @@ describe("MobileMenu", () => {
     const instagram = screen.getByRole("link", { name: /follow @almayascents/i });
     expect(instagram).toHaveFocus();
 
-    // Tab from the last element must wrap back to the first.
+    // Tab from the last element must stay trapped inside the dialog.
     await user.tab();
-    expect(closeButton).toHaveFocus();
+    expect(dialog.contains(document.activeElement)).toBe(true);
   });
 
   it("locks body scroll while open and restores it on unmount", () => {

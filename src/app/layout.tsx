@@ -4,6 +4,7 @@ import { Cormorant_Garamond, Inter } from "next/font/google";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { EditModeRuntime } from "@/components/editor/EditModeRuntime";
 import { siteConfig } from "@/content/site-config";
 import { buildMetadata } from "@/lib/seo";
 
@@ -48,6 +49,7 @@ export default function RootLayout({
         <Header />
         <main id="main-content">{children}</main>
         <Footer />
+        <EditModeRuntime />
       </body>
     </html>
   );
