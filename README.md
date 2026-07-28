@@ -71,6 +71,22 @@ Everything editable lives in three files:
 - `src/content/site-config.ts` — site name, titles, social links, env wiring
 - `src/content/navigation.ts` — header/footer/legal navigation
 
+### Visual back office (GitHub Pages compatible)
+
+This project includes a static **Back Office** at `/admin/`:
+
+- client-side login (stored in browser localStorage)
+- inline visual edit mode (`?edit=1`) for text and images
+- local override storage in browser
+- optional publish to GitHub using a personal access token
+
+Runtime overrides are read from:
+
+- `public/content-overrides.json`
+
+When you publish from `/admin/`, the editor updates that file in your repository.
+After GitHub Pages rebuilds, the new content is visible for all viewers.
+
 Image replacement is documented in
 [public/content/README.md](public/content/README.md) (filenames,
 dimensions, formats, file-size and alt-text guidance).
