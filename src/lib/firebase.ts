@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCN3OtIpq_h6chQqI54YauqWYfHyIamdg0",
@@ -15,6 +16,7 @@ const firebaseConfig = {
 export const firebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
 export const firebaseAuth = getAuth(firebaseApp);
 export const firebaseDb = getFirestore(firebaseApp);
+export const firebaseStorage = getStorage(firebaseApp);
 
 export const FIREBASE_OVERRIDES_COLLECTION = "siteContent";
 export const FIREBASE_OVERRIDES_DOCUMENT = "default";
