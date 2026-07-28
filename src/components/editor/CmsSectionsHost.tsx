@@ -12,6 +12,7 @@ import {
   type CmsSection,
   type ContentOverrides,
 } from "@/lib/edit-overrides";
+import { findSectionIndexAtPoint } from "@/lib/cms-section-order";
 import { loadFirebaseOverrides } from "@/lib/firebase-overrides";
 
 export const CMS_SECTIONS_SLOT_ID = "cms-page-sections";
@@ -34,11 +35,6 @@ async function loadPublishedOverrides(): Promise<ContentOverrides> {
   return EMPTY_OVERRIDES;
 }
 
-/**
- * Place the CMS sections mount inside <main>, before the footer.
- * Prefer just above the newsletter (natural editorial spot), otherwise
- * at the end of main content.
- */
 function placeSectionsMount(): HTMLElement | null {
   const main = document.getElementById("main-content");
   if (!main) return null;
@@ -81,7 +77,15 @@ export function CmsSectionsHost({
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
-  const pointerIdRef = useRef<number | null>(null);
+
+  const draggingIdRef = useRef<string | null>(null);
+  const dropIndexRef = useRef<number | null>(null);
+  const sectionsRef = useRef<CmsSection[]>([]);
+  const onMoveSectionRef = useRef(onMoveSection);
+
+  useEffect(() => {
+    onMoveSectionRef.current = onMoveSection;
+  }, [onMoveSection]);
 
   useEffect(() => {
     if (draft) return;
@@ -91,7 +95,6 @@ export function CmsSectionsHost({
   useEffect(() => {
     const place = () => setMountNode(placeSectionsMount());
     place();
-    // Re-run after paint in case page sections hydrate late.
     const timer = window.setTimeout(place, 50);
     return () => window.clearTimeout(timer);
   }, [pageKey, draft?.sections.length]);
@@ -105,24 +108,53 @@ export function CmsSectionsHost({
     [content.sections, pageKey],
   );
 
-  const finishDrag = () => {
-    if (!draggingId || dropIndex === null) {
+  useEffect(() => {
+    sectionsRef.current = sections;
+  }, [sections]);
+
+  useEffect(() => {
+    if (!canEdit) return;
+
+    const onPointerMove = (event: PointerEvent) => {
+      const activeId = draggingIdRef.current;
+      if (!activeId) return;
+
+      const ids = sectionsRef.current.map((section) => section.id);
+      const targetIndex = findSectionIndexAtPoint(event.clientX, event.clientY, ids);
+      if (targetIndex === null) return;
+      dropIndexRef.current = targetIndex;
+      setDropIndex(targetIndex);
+    };
+
+    const onPointerUp = () => {
+      const activeId = draggingIdRef.current;
+      const targetIndex = dropIndexRef.current;
+      draggingIdRef.current = null;
+      dropIndexRef.current = null;
       setDraggingId(null);
       setDropIndex(null);
-      pointerIdRef.current = null;
-      return;
-    }
 
-    const fromIndex = sections.findIndex((section) => section.id === draggingId);
-    let toIndex = dropIndex;
-    if (fromIndex >= 0 && toIndex > fromIndex) toIndex -= 1;
-    if (fromIndex >= 0 && fromIndex !== toIndex) {
-      onMoveSection?.(draggingId, toIndex);
-    }
+      if (!activeId || targetIndex === null) return;
+      const fromIndex = sectionsRef.current.findIndex((section) => section.id === activeId);
+      if (fromIndex < 0 || fromIndex === targetIndex) return;
+      onMoveSectionRef.current?.(activeId, targetIndex);
+    };
 
-    setDraggingId(null);
-    setDropIndex(null);
-    pointerIdRef.current = null;
+    document.addEventListener("pointermove", onPointerMove, { passive: true });
+    document.addEventListener("pointerup", onPointerUp);
+    document.addEventListener("pointercancel", onPointerUp);
+    return () => {
+      document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerup", onPointerUp);
+      document.removeEventListener("pointercancel", onPointerUp);
+    };
+  }, [canEdit]);
+
+  const startDrag = (sectionId: string, index: number) => {
+    draggingIdRef.current = sectionId;
+    dropIndexRef.current = index;
+    setDraggingId(sectionId);
+    setDropIndex(index);
   };
 
   if (!mountNode || sections.length === 0) return null;
@@ -132,8 +164,8 @@ export function CmsSectionsHost({
       <div className="container-editorial">
         {canEdit ? (
           <p className="mb-8 text-body-sm text-muted">
-            New blocks appear in the page content (above the footer). Drag to reorder
-            in the grid.
+            Press and drag the handle to reorder blocks in this grid. You can also use Up /
+            Down.
           </p>
         ) : null}
         <div className="cms-section-grid">
@@ -144,11 +176,6 @@ export function CmsSectionsHost({
                 draggingId === section.id ? "is-dragging" : ""
               } ${dropIndex === index ? "is-drop-target" : ""}`}
               data-cms-section-id={section.id}
-              onPointerEnter={() => {
-                if (draggingId && draggingId !== section.id) {
-                  setDropIndex(index);
-                }
-              }}
             >
               {canEdit ? (
                 <div className="cms-section-card__tools" data-cms-toolbar>
@@ -157,29 +184,11 @@ export function CmsSectionsHost({
                     className="cms-toolbar__button cms-drag-handle"
                     aria-label={`Drag to reorder ${section.title || "section"}`}
                     onPointerDown={(event) => {
+                      // Ignore non-primary buttons / mouse right click.
+                      if (event.button !== 0) return;
                       event.preventDefault();
-                      event.currentTarget.setPointerCapture(event.pointerId);
-                      pointerIdRef.current = event.pointerId;
-                      setDraggingId(section.id);
-                      setDropIndex(index);
-                    }}
-                    onPointerMove={(event) => {
-                      if (pointerIdRef.current !== event.pointerId || !draggingId) return;
-                      const el = document.elementFromPoint(event.clientX, event.clientY);
-                      const card = el?.closest("[data-cms-section-id]");
-                      if (!(card instanceof HTMLElement)) return;
-                      const targetId = card.dataset.cmsSectionId;
-                      const targetIndex = sections.findIndex((item) => item.id === targetId);
-                      if (targetIndex >= 0) setDropIndex(targetIndex);
-                    }}
-                    onPointerUp={(event) => {
-                      if (pointerIdRef.current !== event.pointerId) return;
-                      finishDrag();
-                    }}
-                    onPointerCancel={() => {
-                      setDraggingId(null);
-                      setDropIndex(null);
-                      pointerIdRef.current = null;
+                      event.stopPropagation();
+                      startDrag(section.id, index);
                     }}
                   >
                     Drag
