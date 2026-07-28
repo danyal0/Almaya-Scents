@@ -27,7 +27,7 @@ import {
 } from "@/lib/firebase-overrides";
 
 const TEXT_SELECTOR =
-  "h1,h2,h3,h4,h5,h6,p,span,small,strong,em,blockquote,figcaption,a,button,label,li";
+  "h1,h2,h3,h4,h5,h6,p,span,small,strong,em,blockquote,figcaption,label,li";
 
 function getElementPath(element: Element): string {
   const segments: string[] = [];
@@ -182,9 +182,17 @@ export function EditModeRuntime() {
     if (!canEdit || !loaded) return;
 
     const onClick = (event: MouseEvent) => {
-      const target = event.target;
-      if (target instanceof HTMLElement && target.closest("[data-cms-toolbar]")) return;
-      if (target instanceof HTMLElement && target.closest("[data-cms-sections]")) return;
+      const raw = event.target;
+      const target =
+        raw instanceof Element
+          ? raw
+          : raw instanceof Node
+            ? raw.parentElement
+            : null;
+      if (!target) return;
+      if (target.closest("[data-cms-toolbar]")) return;
+      if (target.closest("[data-cms-sections]")) return;
+      if (target.closest("button, a, input, textarea, select, label")) return;
 
       const image = nearestEditableImage(target);
       if (image) {
@@ -371,9 +379,13 @@ export function EditModeRuntime() {
 
   const handleMoveSection = (sectionId: string, toIndex: number) => {
     updateDraft((current) => {
-      const pageKey = getCurrentPageKey();
+      const target = current.sections.find((section) => section.id === sectionId);
+      if (!target) {
+        return current;
+      }
+      // Use the section's own pageKey so URL/base-path mismatches don't no-op.
       const pageSections = current.sections
-        .filter((section) => section.pageKey === pageKey)
+        .filter((section) => section.pageKey === target.pageKey)
         .sort((a, b) => a.order - b.order);
       const reordered = moveSectionInList(pageSections, sectionId, toIndex);
       if (reordered === pageSections) return current;

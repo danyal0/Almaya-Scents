@@ -8,6 +8,7 @@ import {
   getCurrentPageKey,
   normalizeOverrides,
   OVERRIDES_FILE_PATH,
+  pageKeysMatch,
   resolvePublicPath,
   type CmsSection,
   type ContentOverrides,
@@ -71,9 +72,7 @@ export function CmsSectionsHost({
   onMoveSection,
 }: CmsSectionsHostProps) {
   const [remote, setRemote] = useState<ContentOverrides>(EMPTY_OVERRIDES);
-  const [pageKey] = useState(() =>
-    typeof window === "undefined" ? "/" : getCurrentPageKey(),
-  );
+  const pageKey = typeof window === "undefined" ? "/" : getCurrentPageKey();
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
@@ -103,7 +102,7 @@ export function CmsSectionsHost({
   const sections = useMemo(
     () =>
       content.sections
-        .filter((section) => section.pageKey === pageKey)
+        .filter((section) => pageKeysMatch(section.pageKey, pageKey))
         .sort((a, b) => a.order - b.order),
     [content.sections, pageKey],
   );
@@ -203,23 +202,39 @@ export function CmsSectionsHost({
                   <button
                     type="button"
                     className="cms-toolbar__button"
-                    onClick={() => onMoveSection?.(section.id, Math.max(0, index - 1))}
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      onMoveSection?.(section.id, Math.max(0, index - 1));
+                    }}
                   >
                     Up
                   </button>
                   <button
                     type="button"
                     className="cms-toolbar__button"
-                    onClick={() =>
-                      onMoveSection?.(section.id, Math.min(sections.length - 1, index + 1))
-                    }
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      onMoveSection?.(
+                        section.id,
+                        Math.min(sections.length - 1, index + 1),
+                      );
+                    }}
                   >
                     Down
                   </button>
                   <button
                     type="button"
                     className="cms-toolbar__button"
-                    onClick={() => onDeleteSection?.(section.id)}
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      onDeleteSection?.(section.id);
+                    }}
                   >
                     Delete
                   </button>

@@ -61,14 +61,27 @@ export function isBrowser(): boolean {
 
 export function getCurrentPageKey(): string {
   if (!isBrowser()) return "/";
-  const path = window.location.pathname.replace(PUBLIC_BASE_PATH, "") || "/";
+  return normalizePageKey(window.location.pathname, window.location.search);
+}
+
+/** Normalize pathnames so `/about` and `/about/` match. */
+export function normalizePageKey(pathname: string, search = ""): string {
+  let path = pathname || "/";
+  if (PUBLIC_BASE_PATH && path.startsWith(PUBLIC_BASE_PATH)) {
+    path = path.slice(PUBLIC_BASE_PATH.length) || "/";
+  }
+  if (!path.startsWith("/")) path = `/${path}`;
   const normalized = path.endsWith("/") ? path : `${path}/`;
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(search.startsWith("?") ? search : search ? `?${search}` : "");
   const customSlug = params.get("slug");
   if (normalized === "/custom/" && customSlug) {
     return `custom:${customSlug}`;
   }
   return normalized;
+}
+
+export function pageKeysMatch(a: string, b: string): boolean {
+  return normalizePageKey(a) === normalizePageKey(b) || a === b;
 }
 
 export function createId(prefix: string): string {
