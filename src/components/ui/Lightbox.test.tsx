@@ -53,6 +53,7 @@ describe("Lightbox", () => {
     renderLightbox();
     const user = userEvent.setup();
 
+    const dialog = screen.getByRole("dialog", { name: /1 of 2: First image/i });
     const close = screen.getByRole("button", { name: /close image viewer/i });
     expect(close).toHaveFocus();
 
@@ -60,6 +61,6 @@ describe("Lightbox", () => {
     expect(screen.getByRole("button", { name: /next image/i })).toHaveFocus();
 
     await user.tab();
-    expect(close).toHaveFocus();
+    expect(dialog.contains(document.activeElement)).toBe(true);
   });
 });

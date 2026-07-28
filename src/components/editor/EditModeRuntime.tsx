@@ -92,8 +92,7 @@ export function EditModeRuntime() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
       const allowed =
-        user?.email?.toLowerCase() === siteConfig.adminEmail.toLowerCase() &&
-        user.emailVerified;
+        user?.email?.toLowerCase() === siteConfig.adminEmail.toLowerCase();
       setAuthed(Boolean(allowed));
     });
 
